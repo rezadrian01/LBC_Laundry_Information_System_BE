@@ -11,6 +11,38 @@ const getItemList = async (req, res, next) => {
     }
 }
 
+const searchItemList = async (req, res, next) => {
+    try {
+        const { searchTerm } = req.params;
+        const itemList = await ItemList.aggregate([
+            {
+                $lookup: {
+                    from: "itemservices",
+                    localField: "_id",
+                    foreignField: "itemListId",
+                    as: "services"
+                }
+            },
+            {
+                $match: {
+                    $or: [
+                        { 'name': { $regex: searchTerm, $options: 'i' } }
+                    ]
+                }
+            },
+            {
+                $project: {
+                    'services.itemListId': 0
+                }
+            }
+        ])
+        responseHelper(res, "Success search item", 200, true, itemList)
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err)
+    }
+}
+
 const createItem = async (req, res, next) => {
     try {
         const { itemName } = req.body;
@@ -59,4 +91,4 @@ const deleteItem = async (req, res, next) => {
     }
 }
 
-module.exports = { getItemList, createItem, updateItem, deleteItem }
+module.exports = { getItemList, searchItemList, createItem, updateItem, deleteItem }
