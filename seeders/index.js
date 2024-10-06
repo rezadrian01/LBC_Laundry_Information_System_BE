@@ -3,6 +3,7 @@ const { config } = require('dotenv');
 const { seedAdmin } = require('./adminSeeder');
 const { seedOwner } = require('./ownerSeeder');
 const { seedServiceList } = require('./serviceListSeeder');
+const { seedItemList } = require('./itemListSeeder');
 
 config();
 const seeder = async () => {
@@ -10,6 +11,7 @@ const seeder = async () => {
     await seedAdmin();
     await seedOwner();
     await seedServiceList();
+    await seedItemList();
 }
 
 seeder().then(() => {
