@@ -4,6 +4,7 @@ const { seedAdmin } = require('./adminSeeder');
 const { seedOwner } = require('./ownerSeeder');
 const { seedServiceList } = require('./serviceListSeeder');
 const { seedItemList } = require('./itemListSeeder');
+const { seedItemService } = require('./itemServiceSeeder');
 
 config();
 const seeder = async () => {
@@ -12,6 +13,7 @@ const seeder = async () => {
     await seedOwner();
     await seedServiceList();
     await seedItemList();
+    await seedItemService();
 }
 
 seeder().then(() => {
