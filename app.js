@@ -13,6 +13,7 @@ const VERSION = '/api/v1';
 // Routes
 const authRoute = require('./routes/authRoute');
 const serviceListRoute = require('./routes/serviceListRoute');
+const itemListRoute = require('./routes/itemListRoute')
 
 // Middlewares
 const isAuthMiddleware = require('./middleware/authMiddleware');
@@ -23,7 +24,8 @@ app.use(cors()).use(bodyParser.json()).use(cookieParser())
 app.use('/', isAuthMiddleware.isAuth)
 
 app.use(`${VERSION}/auth`, authRoute);
-app.use(`${VERSION}/serviceList`, serviceListRoute)
+app.use(`${VERSION}/serviceList`, serviceListRoute);
+app.use(`${VERSION}/itemList`, itemListRoute)
 
 app.use((err, req, res, next) => {
     const data = err.data || [];
@@ -33,6 +35,6 @@ app.use((err, req, res, next) => {
 })
 
 mongoose.connect(process.env.MONGODB_URI).then(() => {
-    app.listen(process.env.PORT, () => console.log(`Server is running at http://localhost:${process.env.PORT}`))
+    app.listen(process.env.PORT, () => console.log(`Server is running at ${process.env.NODE_ENV === 'production' ? 'port ' : 'http://localhost:'}${process.env.PORT}`))
 }
 ).catch(err => console.log(err))

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-const { config } = require('dotenv')
+const { config } = require('dotenv');
+const Admin = require('../models/Admin');
 
 const { errorHelper } = require('../helpers/responseHelper');
 
@@ -12,8 +13,11 @@ const isAuth = async (req, res, next) => {
 
         const decodedToken = await jwt.verify(token, process.env.JWT_SECRET_KEY);
         if (!decodedToken) errorHelper("Invalid token provided", 401);
+        const existingAdmin = await Admin.findById(decodedToken.userId);
+        if (!existingAdmin) errorHelper("Admin not found", 404);
+
         req.isAuth = true;
-        req.userId = decodedToken.userId
+        req.currentUserData = existingAdmin
         next()
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
