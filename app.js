@@ -11,11 +11,19 @@ const app = express();
 const VERSION = '/api/v1';
 
 // Routes
-const authRoute = require('./routes/authRoute')
+const authRoute = require('./routes/authRoute');
+const serviceListRoute = require('./routes/serviceListRoute');
+
+// Middlewares
+const isAuthMiddleware = require('./middleware/authMiddleware');
 
 app.use(cors()).use(bodyParser.json()).use(cookieParser())
 
+
+app.use('/', isAuthMiddleware.isAuth)
+
 app.use(`${VERSION}/auth`, authRoute);
+app.use(`${VERSION}/serviceList`, serviceListRoute)
 
 app.use((err, req, res, next) => {
     const data = err.data || [];
