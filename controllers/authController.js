@@ -1,7 +1,7 @@
 const admin = require('../models/admin');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { errorHelper } = require('../helpers/responseHelper');
+const { errorHelper, responseHelper } = require('../helpers/responseHelper');
 const { config } = require('dotenv')
 
 
@@ -21,11 +21,23 @@ const login = async (req, res, next) => {
             username: existingAdmin.username
         }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRY })
 
-        res.cookie("token", token, { httpOnly: true }).status(200).json({ success: true, message: "Login Success", token: isRemember ? token : null })
+        res.cookie("token", token, { httpOnly: true }).status(200).json({ success: true, message: "Login success", token: isRemember ? token : null })
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
     }
 }
 
-module.exports = { login }
+const logout = async (req, res, next) => {
+    try {
+        const { cookie } = req.headers;
+        const token = cookie.split("=")[1]
+        if (!token) errorHelper("No token provided", 401);
+        res.cookie("token", "").status(200).json({ success: true, message: "Logout success" })
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err)
+    }
+}
+
+module.exports = { login, logout }
