@@ -13,19 +13,22 @@ const VERSION = '/api/v1';
 // Routes
 const authRoute = require('./routes/authRoute');
 const serviceListRoute = require('./routes/serviceListRoute');
-const itemListRoute = require('./routes/itemListRoute')
+const itemListRoute = require('./routes/itemListRoute');
+const itemServiceRoute = require('./routes/itemServiceRoute')
 
 // Middlewares
-const isAuthMiddleware = require('./middleware/authMiddleware');
+const authMiddleware = require('./middleware/authMiddleware');
 
 app.use(cors()).use(bodyParser.json()).use(cookieParser())
 
 
-app.use('/', isAuthMiddleware.isAuth)
-
 app.use(`${VERSION}/auth`, authRoute);
+
+app.use('/', authMiddleware.isAuth)
+
 app.use(`${VERSION}/serviceList`, serviceListRoute);
 app.use(`${VERSION}/itemList`, itemListRoute)
+app.use(`${VERSION}/itemService`, itemServiceRoute)
 
 app.use((err, req, res, next) => {
     const data = err.data || [];

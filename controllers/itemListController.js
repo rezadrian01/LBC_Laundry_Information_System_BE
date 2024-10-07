@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const { responseHelper, errorHelper } = require('../helpers/responseHelper');
 const ItemList = require('../models/ItemList');
 
@@ -11,6 +12,36 @@ const getItemList = async (req, res, next) => {
     }
 }
 
+const getItemById = async (req, res, next) => {
+    try {
+        const { itemId } = req.params;
+        const existingItem = await ItemList.aggregate([
+            {
+                $lookup: {
+                    from: 'itemservices',
+                    localField: '_id',
+                    foreignField: 'itemId',
+                    as: 'services'
+                },
+            },
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(itemId)
+                }
+            },
+            {
+                $project: {
+                    'services.itemId': 0
+                }
+            }
+        ])
+        responseHelper(res, "Success get item by ID", 200, true, existingItem);
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 const searchItemList = async (req, res, next) => {
     try {
         const { searchTerm } = req.params;
@@ -19,7 +50,7 @@ const searchItemList = async (req, res, next) => {
                 $lookup: {
                     from: "itemservices",
                     localField: "_id",
-                    foreignField: "itemListId",
+                    foreignField: "itemId",
                     as: "services"
                 }
             },
@@ -32,9 +63,9 @@ const searchItemList = async (req, res, next) => {
             },
             {
                 $project: {
-                    'services.itemListId': 0
+                    'services.itemId': 0
                 }
-            }
+            },
         ])
         responseHelper(res, "Success search item", 200, true, itemList)
     } catch (err) {
@@ -91,4 +122,4 @@ const deleteItem = async (req, res, next) => {
     }
 }
 
-module.exports = { getItemList, searchItemList, createItem, updateItem, deleteItem }
+module.exports = { getItemList, getItemById, searchItemList, createItem, updateItem, deleteItem }

@@ -14,7 +14,7 @@ const seedItemService = async () => {
         // Looping item service price
         for (const itemService of item.price) {
             const newItemService = new ItemService({
-                itemListId: existingItem,
+                itemId: existingItem,
                 name: itemService.service,
                 price: itemService.price
             })

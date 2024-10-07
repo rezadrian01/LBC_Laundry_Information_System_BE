@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const itemServiceSchema = new Schema({
-    itemListId: {
+    itemId: {
         type: Schema.Types.ObjectId,
         ref: 'ItemList',
         required: true
