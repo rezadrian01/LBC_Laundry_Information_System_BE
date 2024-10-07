@@ -3,8 +3,7 @@ const ItemService = require('../models/ItemService');
 const ItemList = require('../models/ItemList');
 
 const seedItemService = async () => {
-    const existingItemService = await ItemService.findById()
-    if (existingItemService?.length !== ITEM_LIST?.length) await ItemService.deleteMany({});
+    await ItemService.deleteMany({});
 
     // Looping items
     for (const item of ITEM_LIST) {

@@ -23,6 +23,16 @@ const laundrySchema = new Schema({
         type: String,
         required: true
     },
+    customerAddress: {
+        type: String,
+        default: "",
+        required: true
+    },
+    customerContact: {
+        type: String,
+        required: true,
+        default: ""
+    },
     totalPrice: {
         type: Number,
         required: true
