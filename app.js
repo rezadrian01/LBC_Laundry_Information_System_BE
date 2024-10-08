@@ -15,7 +15,8 @@ const VERSION = '/api/v1';
 const authRoute = require('./routes/authRoute');
 const serviceListRoute = require('./routes/serviceListRoute');
 const itemListRoute = require('./routes/itemListRoute');
-const itemServiceRoute = require('./routes/itemServiceRoute')
+const itemServiceRoute = require('./routes/itemServiceRoute');
+const branchRoute = require('./routes/branchRoute');
 
 // Middlewares
 const authMiddleware = require('./middleware/authMiddleware');
@@ -25,17 +26,18 @@ app.use(cors()).use(bodyParser.json()).use(cookieParser())
 
 app.use(`${VERSION}/auth`, authRoute);
 
-app.use('/', authMiddleware.isAuth)
+app.use('/', authMiddleware.isAuth);
 
 app.use(`${VERSION}/serviceList`, serviceListRoute);
-app.use(`${VERSION}/itemList`, itemListRoute)
-app.use(`${VERSION}/itemService`, itemServiceRoute)
+app.use(`${VERSION}/itemList`, itemListRoute);
+app.use(`${VERSION}/itemService`, itemServiceRoute);
+app.use(`${VERSION}/branch`, branchRoute)
 
 app.use((err, req, res, next) => {
     const data = err.data || [];
     const statusCode = err.statusCode || 500;
     const message = err.message || "An error occured";
-    responseHelper(res, message, statusCode, false, data)
+    responseHelper(res, message, statusCode, false, data);
 })
 
 mongoose.connect(process.env.MONGODB_URI).then(() => {
