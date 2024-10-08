@@ -18,11 +18,12 @@ const itemListRoute = require('./routes/itemListRoute');
 const itemServiceRoute = require('./routes/itemServiceRoute');
 const branchListRoute = require('./routes/branchListRoute');
 const statusListRoute = require('./routes/statusListRoute');
+const laundryRoute = require('./routes/laundryRoute');
 
 // Middlewares
 const authMiddleware = require('./middleware/authMiddleware');
 
-app.use(cors()).use(bodyParser.json()).use(cookieParser())
+app.use(cors()).use(bodyParser.json()).use(bodyParser.urlencoded({ extended: true })).use(cookieParser())
 
 
 app.use(`${VERSION}/auth`, authRoute);
@@ -34,6 +35,7 @@ app.use(`${VERSION}/item`, itemListRoute);
 app.use(`${VERSION}/itemService`, itemServiceRoute);
 app.use(`${VERSION}/branch`, branchListRoute);
 app.use(`${VERSION}/status`, statusListRoute);
+app.use(`${VERSION}/laundry`, laundryRoute);
 
 app.use((err, req, res, next) => {
     const data = err.data || [];

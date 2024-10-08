@@ -7,7 +7,7 @@ const laundryServiceSchema = new Schema({
         ref: "Laundry",
         required: true
     },
-    serviceListId: {
+    serviceId: {
         type: Schema.Types.ObjectId,
         ref: "ServiceList",
         required: true

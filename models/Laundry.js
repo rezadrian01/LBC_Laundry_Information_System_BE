@@ -5,7 +5,6 @@ const laundrySchema = new Schema({
     receiptNumber: {
         type: Number,
         required: true,
-        unique: true,
         index: true
     },
     branchId: {
@@ -26,11 +25,9 @@ const laundrySchema = new Schema({
     customerAddress: {
         type: String,
         default: "",
-        required: true
     },
     customerContact: {
         type: String,
-        required: true,
         default: ""
     },
     totalPrice: {
