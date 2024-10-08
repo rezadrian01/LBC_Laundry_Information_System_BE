@@ -16,7 +16,8 @@ const authRoute = require('./routes/authRoute');
 const serviceListRoute = require('./routes/serviceListRoute');
 const itemListRoute = require('./routes/itemListRoute');
 const itemServiceRoute = require('./routes/itemServiceRoute');
-const branchRoute = require('./routes/branchRoute');
+const branchListRoute = require('./routes/branchListRoute');
+const statusListRoute = require('./routes/statusListRoute');
 
 // Middlewares
 const authMiddleware = require('./middleware/authMiddleware');
@@ -28,10 +29,11 @@ app.use(`${VERSION}/auth`, authRoute);
 
 app.use('/', authMiddleware.isAuth);
 
-app.use(`${VERSION}/serviceList`, serviceListRoute);
-app.use(`${VERSION}/itemList`, itemListRoute);
+app.use(`${VERSION}/service`, serviceListRoute);
+app.use(`${VERSION}/item`, itemListRoute);
 app.use(`${VERSION}/itemService`, itemServiceRoute);
-app.use(`${VERSION}/branch`, branchRoute)
+app.use(`${VERSION}/branch`, branchListRoute);
+app.use(`${VERSION}/status`, statusListRoute);
 
 app.use((err, req, res, next) => {
     const data = err.data || [];

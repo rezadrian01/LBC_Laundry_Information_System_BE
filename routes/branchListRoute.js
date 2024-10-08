@@ -1,5 +1,5 @@
 const express = require('express');
-const { getBranchlist, getBranchDetail, createBranch, updateBranch, deleteBranch } = require('../controllers/branchController');
+const { getBranchlist, getBranchDetail, createBranch, updateBranch, deleteBranch } = require('../controllers/branchListController');
 const router = express.Router();
 
 router.get('/', getBranchlist);

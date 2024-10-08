@@ -1,5 +1,5 @@
 const { BRANCH_LIST } = require('../constants/branchList');
-const Branch = require('../models/Branch');
+const Branch = require('../models/BranchList');
 
 const seedBranchList = async () => {
     await Branch.deleteMany({});

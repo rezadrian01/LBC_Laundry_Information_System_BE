@@ -1,5 +1,5 @@
 const { responseHelper, errorHelper } = require('../helpers/responseHelper');
-const Branch = require('../models/Branch');
+const Branch = require('../models/BranchList');
 
 const getBranchlist = async (req, res, next) => {
     try {
