@@ -7,6 +7,7 @@ const { seedItemList } = require('./itemListSeeder');
 const { seedItemService } = require('./itemServiceSeeder');
 const { seedBranchList } = require('./branchSeeder');
 const { seedWeightPrice } = require('./weightPriceSeeder');
+const { seedStatusList } = require('./statusListSeeder');
 
 config();
 const seeder = async () => {
@@ -18,15 +19,16 @@ const seeder = async () => {
     await seedItemService();
     await seedBranchList();
     await seedWeightPrice();
+    await seedStatusList();
 }
 
 seeder().then(() => {
-    console.log("=======================================")
-    console.log("==========  Seeder finished  ==========")
-    console.log("=======================================")
+    console.log("=======================================");
+    console.log("==========  Seeder finished  ==========");
+    console.log("=======================================");
 }).catch(err => {
     console.log(err);
 }).finally(() => {
     mongoose.connection.close();
-    process.exit(0)
+    process.exit(0);
 });

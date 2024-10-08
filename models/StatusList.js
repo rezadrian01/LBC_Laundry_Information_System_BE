@@ -8,4 +8,4 @@ const statusListSchema = new Schema({
     }
 })
 
-module.exports = mongoose.model("Status", statusListSchema);
+module.exports = mongoose.model("StatusList", statusListSchema);
