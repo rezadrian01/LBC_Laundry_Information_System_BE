@@ -5,7 +5,8 @@ const laundrySchema = new Schema({
     receiptNumber: {
         type: Number,
         required: true,
-        index: true
+        index: true,
+        unique: true
     },
     branchId: {
         type: Schema.Types.ObjectId,

@@ -1,7 +1,8 @@
 const express = require('express');
-const { createLaundry } = require('../controllers/laundryController');
+const { createLaundry, getLaundryListWithArchive } = require('../controllers/laundryController');
 const router = express.Router();
 
-router.post('/', createLaundry)
+router.get('/all', getLaundryListWithArchive);
+router.post('/', createLaundry);
 
 module.exports = router;

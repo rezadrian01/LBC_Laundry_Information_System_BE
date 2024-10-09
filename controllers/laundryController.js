@@ -10,7 +10,190 @@ const StatusList = require('../models/StatusList');
 
 const getLaundryListWithArchive = async (request, res, next) => {
     try {
-        const laundryList = await Laundry.aggregate([])
+        const laundryList = await Laundry.aggregate([
+            // laundry branch
+            {
+                $lookup: {
+                    from: 'branchlists',
+                    localField: 'branchId',
+                    foreignField: '_id',
+                    as: 'branch'
+                }
+            },
+            {
+                $project: {
+                    branchId: 0
+                }
+            },
+            {
+                $unwind: {
+                    path: '$branch'
+                }
+            },
+
+            // laundry services
+            {
+                $lookup: {
+                    from: 'laundryservices',
+                    localField: '_id',
+                    foreignField: 'laundryId',
+                    as: 'laundryServices'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'servicelists',
+                    localField: 'laundryServices.serviceId',
+                    foreignField: '_id',
+                    as: 'laundryServices'
+                }
+            },
+
+            // item type
+            {
+                $lookup: {
+                    from: 'itemtypes',
+                    localField: '_id',
+                    foreignField: 'laundryId',
+                    as: 'tempItemType'
+                }
+            },
+
+            // combine item type
+            {
+                $addFields: {
+                    items: {
+                        $map: {
+                            input: '$tempItemType',
+                            as: 'tempItemType',
+                            in: {
+                                itemServiceId: '$$tempItemType.itemServiceId',
+                                quantity: '$$tempItemType.quantity'
+                            }
+                        }
+                    }
+                }
+            },
+
+            // get item services with current item serviceId
+            {
+                $lookup: {
+                    from: 'itemservices',
+                    localField: 'items.itemServiceId',
+                    foreignField: '_id',
+                    as: 'tempItemServices'
+                }
+            },
+
+            // merge itemType with itemService
+            {
+                $addFields: {
+                    mergeItemService: {
+                        $map: {
+                            input: '$items',
+                            as: 'items',
+                            in: {
+                                itemServiceId: '$$items.itemServiceId',
+                                quantity: '$$items.quantity',
+                                serviceDetail: {
+                                    $arrayElemAt: [
+                                        {
+                                            $filter: {
+                                                input: '$tempItemServices',
+                                                as: 'tempItemServices',
+                                                cond: { $eq: ['$$tempItemServices._id', '$$items.itemServiceId'] }
+                                            }
+                                        }, 0
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            {
+                $project: {
+                    tempItemServices: 0
+                }
+            },
+
+            // get all item detail with itemId in mergeItemServiceField
+            {
+                $lookup: {
+                    from: 'itemlists',
+                    localField: 'mergeItemService.serviceDetail.itemId',
+                    foreignField: '_id',
+                    as: 'itemLists'
+                }
+            },
+
+            // merge all item list to existing merge itemType and itemService
+            {
+                $addFields: {
+                    itemsResult: {
+                        $map: {
+                            input: '$mergeItemService',
+                            as: 'mergeItemService',
+                            in: {
+                                itemServiceId: '$$mergeItemService.itemServiceId',
+                                quantity: '$$mergeItemService.quantity',
+                                itemServiceName: '$$mergeItemService.serviceDetail.name',
+                                itemServicePrice: '$$mergeItemService.serviceDetail.price',
+                                itemDetail: {
+                                    $arrayElemAt: [
+                                        {
+                                            $filter: {
+                                                input: '$itemLists',
+                                                as: 'itemLists',
+                                                cond: { $eq: ['$$mergeItemService.serviceDetail.itemId', '$$itemLists._id'] }
+                                            }
+                                        }, 0
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    itemLists: 0,
+                    items: 0,
+                    tempItemType: 0,
+                    mergeItemService: 0
+                }
+            },
+
+
+
+            // laundry status
+            {
+                $lookup: {
+                    from: 'laundrystatuses',
+                    localField: '_id',
+                    foreignField: 'laundryId',
+                    as: 'status'
+                }
+            },
+
+            {
+                $lookup: {
+                    from: 'statuslists',
+                    localField: 'status.statusId',
+                    foreignField: '_id',
+                    as: 'status'
+                }
+            },
+
+            {
+                $unwind: {
+                    path: '$status'
+                }
+            }
+        ])
+
+        responseHelper(res, "Success get all laundry", 200, true, laundryList)
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
@@ -60,7 +243,8 @@ const createLaundry = async (req, res, next) => {
         let totalPrice = 0;
         const itemServiceList = [];
 
-        if (isWeight != 'false') {
+        if (isWeight == 'true') {
+            if (!weight) errorHelper("Weight must be exist", 422);
             const prices = await WeightPrice.find().sort({ maxWeight: 1 });
 
             // search price for current weight
@@ -76,6 +260,7 @@ const createLaundry = async (req, res, next) => {
             if (totalItems) newLaundry.totalItems = totalItems;
         }
         else {
+            if (!items) errorHelper("Items must be exist", 422);
             let tempTotalItems = 0;
             const promises = Object.keys(items).map(async (key) => {
 
@@ -87,7 +272,7 @@ const createLaundry = async (req, res, next) => {
 
                 // search existing item service to get the price
                 const existingItemService = await ItemService.findById(items[key].itemServiceId);
-                if (!existingItemService) errorHelper("Item service not found");
+                if (!existingItemService) errorHelper("Item service not found", 404);
 
                 return existingItemService.price * items[key].quantity;
             })
@@ -99,7 +284,7 @@ const createLaundry = async (req, res, next) => {
             newLaundry.totalItems = tempTotalItems;
 
             // add weight field if exist
-            newLaundry.weight = weight;
+            if (weight) newLaundry.weight = weight;
 
         }
         // add totalPrice field to new laundry
