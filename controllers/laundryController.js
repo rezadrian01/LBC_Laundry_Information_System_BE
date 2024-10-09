@@ -5,193 +5,14 @@ const ItemType = require('../models/itemType');
 const LaundryStatus = require('../models/LaundryStatus');
 const WeightPrice = require('../models/WeightPrice');
 const ItemService = require('../models/ItemService');
-const { errorHelper, responseHelper } = require('../helpers/responseHelper');
 const StatusList = require('../models/StatusList');
 
-const getLaundryListWithArchive = async (request, res, next) => {
+const { errorHelper, responseHelper } = require('../helpers/responseHelper');
+const { GET_LAUNDRY_LIST, GET_LAUNDRY_LIST_UNARCHIVED, GET_LAUNDRY_LIST_ARCHIVED } = require('../helpers/queryHelper');
+
+const getLaundryList = async (request, res, next) => {
     try {
-        const laundryList = await Laundry.aggregate([
-            // laundry branch
-            {
-                $lookup: {
-                    from: 'branchlists',
-                    localField: 'branchId',
-                    foreignField: '_id',
-                    as: 'branch'
-                }
-            },
-            {
-                $project: {
-                    branchId: 0
-                }
-            },
-            {
-                $unwind: {
-                    path: '$branch'
-                }
-            },
-
-            // laundry services
-            {
-                $lookup: {
-                    from: 'laundryservices',
-                    localField: '_id',
-                    foreignField: 'laundryId',
-                    as: 'laundryServices'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'servicelists',
-                    localField: 'laundryServices.serviceId',
-                    foreignField: '_id',
-                    as: 'laundryServices'
-                }
-            },
-
-            // item type
-            {
-                $lookup: {
-                    from: 'itemtypes',
-                    localField: '_id',
-                    foreignField: 'laundryId',
-                    as: 'tempItemType'
-                }
-            },
-
-            // combine item type
-            {
-                $addFields: {
-                    items: {
-                        $map: {
-                            input: '$tempItemType',
-                            as: 'tempItemType',
-                            in: {
-                                itemServiceId: '$$tempItemType.itemServiceId',
-                                quantity: '$$tempItemType.quantity'
-                            }
-                        }
-                    }
-                }
-            },
-
-            // get item services with current item serviceId
-            {
-                $lookup: {
-                    from: 'itemservices',
-                    localField: 'items.itemServiceId',
-                    foreignField: '_id',
-                    as: 'tempItemServices'
-                }
-            },
-
-            // merge itemType with itemService
-            {
-                $addFields: {
-                    mergeItemService: {
-                        $map: {
-                            input: '$items',
-                            as: 'items',
-                            in: {
-                                itemServiceId: '$$items.itemServiceId',
-                                quantity: '$$items.quantity',
-                                serviceDetail: {
-                                    $arrayElemAt: [
-                                        {
-                                            $filter: {
-                                                input: '$tempItemServices',
-                                                as: 'tempItemServices',
-                                                cond: { $eq: ['$$tempItemServices._id', '$$items.itemServiceId'] }
-                                            }
-                                        }, 0
-                                    ]
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-
-            {
-                $project: {
-                    tempItemServices: 0
-                }
-            },
-
-            // get all item detail with itemId in mergeItemServiceField
-            {
-                $lookup: {
-                    from: 'itemlists',
-                    localField: 'mergeItemService.serviceDetail.itemId',
-                    foreignField: '_id',
-                    as: 'itemLists'
-                }
-            },
-
-            // merge all item list to existing merge itemType and itemService
-            {
-                $addFields: {
-                    itemsResult: {
-                        $map: {
-                            input: '$mergeItemService',
-                            as: 'mergeItemService',
-                            in: {
-                                itemServiceId: '$$mergeItemService.itemServiceId',
-                                quantity: '$$mergeItemService.quantity',
-                                itemServiceName: '$$mergeItemService.serviceDetail.name',
-                                itemServicePrice: '$$mergeItemService.serviceDetail.price',
-                                itemDetail: {
-                                    $arrayElemAt: [
-                                        {
-                                            $filter: {
-                                                input: '$itemLists',
-                                                as: 'itemLists',
-                                                cond: { $eq: ['$$mergeItemService.serviceDetail.itemId', '$$itemLists._id'] }
-                                            }
-                                        }, 0
-                                    ]
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                $project: {
-                    itemLists: 0,
-                    items: 0,
-                    tempItemType: 0,
-                    mergeItemService: 0
-                }
-            },
-
-
-
-            // laundry status
-            {
-                $lookup: {
-                    from: 'laundrystatuses',
-                    localField: '_id',
-                    foreignField: 'laundryId',
-                    as: 'status'
-                }
-            },
-
-            {
-                $lookup: {
-                    from: 'statuslists',
-                    localField: 'status.statusId',
-                    foreignField: '_id',
-                    as: 'status'
-                }
-            },
-
-            {
-                $unwind: {
-                    path: '$status'
-                }
-            }
-        ])
+        const laundryList = await Laundry.aggregate(GET_LAUNDRY_LIST)
 
         responseHelper(res, "Success get all laundry", 200, true, laundryList)
     } catch (err) {
@@ -200,12 +21,25 @@ const getLaundryListWithArchive = async (request, res, next) => {
     }
 }
 
-const getLaundryList = async (req, res, next) => {
+const getLaundryListUnarchived = async (req, res, next) => {
     try {
+        const laundryList = await Laundry.aggregate(GET_LAUNDRY_LIST_UNARCHIVED);
 
+        responseHelper(res, "Success get unarchived laundry list", 200, true, laundryList);
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
+    }
+}
+
+const getLaundryListArchived = async (req, res, next) => {
+    try {
+        const laundryList = await Laundry.aggregate(GET_LAUNDRY_LIST_ARCHIVED);
+
+        responseHelper(res, "Success get unarchived laundry list", 200, true, laundryList);
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err)
     }
 }
 
@@ -348,4 +182,4 @@ const deleteLaundry = async (req, res, next) => {
     }
 }
 
-module.exports = { getLaundryListWithArchive, getLaundryList, getLaundryDetail, getLaundryInfo, createLaundry, updateLaundry, deleteLaundry }
+module.exports = { getLaundryList, getLaundryListUnarchived, getLaundryListArchived, getLaundryDetail, getLaundryInfo, createLaundry, updateLaundry, deleteLaundry }

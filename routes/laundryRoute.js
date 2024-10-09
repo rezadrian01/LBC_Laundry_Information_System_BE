@@ -1,8 +1,10 @@
 const express = require('express');
-const { createLaundry, getLaundryListWithArchive } = require('../controllers/laundryController');
+const { createLaundry, getLaundryList, getLaundryListUnarchived, getLaundryListArchived } = require('../controllers/laundryController');
 const router = express.Router();
 
-router.get('/all', getLaundryListWithArchive);
+router.get('/', getLaundryList);
+router.get('/unarchived', getLaundryListUnarchived);
+router.get('/archived', getLaundryListArchived);
 router.post('/', createLaundry);
 
 module.exports = router;
