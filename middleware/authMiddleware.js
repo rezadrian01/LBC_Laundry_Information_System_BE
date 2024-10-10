@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const { config } = require('dotenv');
 const Admin = require('../models/Admin');
 
-const { errorHelper } = require('../helpers/responseHelper');
+const { errorHelper } = require('../helpers/errorHelper');
 
 config();
 const isAuth = async (req, res, next) => {
@@ -17,7 +17,7 @@ const isAuth = async (req, res, next) => {
         if (!existingAdmin) errorHelper("Admin not found", 404);
 
         req.isAuth = true;
-        req.currentUserData = existingAdmin
+        req.currentUserData = existingAdmin;
         next()
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;

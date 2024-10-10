@@ -1,7 +1,7 @@
 const admin = require('../models/Admin');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { errorHelper, responseHelper } = require('../helpers/responseHelper');
+const { errorHelper } = require('../helpers/errorHelper');
 const { config } = require('dotenv')
 
 

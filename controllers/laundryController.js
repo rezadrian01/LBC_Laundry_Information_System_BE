@@ -6,14 +6,17 @@ const LaundryStatus = require('../models/LaundryStatus');
 const WeightPrice = require('../models/WeightPrice');
 const ItemService = require('../models/ItemService');
 const StatusList = require('../models/StatusList');
+const { STATUS_LIST } = require('../constants/statusList');
 
-const { errorHelper, responseHelper } = require('../helpers/responseHelper');
-const { GET_LAUNDRY_LIST, GET_LAUNDRY_LIST_UNARCHIVED, GET_LAUNDRY_LIST_ARCHIVED } = require('../helpers/queryHelper');
+const { responseHelper } = require('../helpers/responseHelper');
+const { errorHelper } = require('../helpers/errorHelper');
+const { GET_LAUNDRY_LIST, GET_LAUNDRY_LIST_UNARCHIVED, GET_LAUNDRY_LIST_ARCHIVED, GET_LAUNDRY_BY_RECEIPT_NUMBER } = require('../helpers/queryHelper');
 
-const getLaundryList = async (request, res, next) => {
+let receiptNumberCounter = 0;
+
+const getLaundryList = async (req, res, next) => {
     try {
         const laundryList = await Laundry.aggregate(GET_LAUNDRY_LIST)
-
         responseHelper(res, "Success get all laundry", 200, true, laundryList)
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
@@ -24,7 +27,6 @@ const getLaundryList = async (request, res, next) => {
 const getLaundryListUnarchived = async (req, res, next) => {
     try {
         const laundryList = await Laundry.aggregate(GET_LAUNDRY_LIST_UNARCHIVED);
-
         responseHelper(res, "Success get unarchived laundry list", 200, true, laundryList);
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
@@ -34,8 +36,7 @@ const getLaundryListUnarchived = async (req, res, next) => {
 
 const getLaundryListArchived = async (req, res, next) => {
     try {
-        const laundryList = await Laundry.aggregate(GET_LAUNDRY_LIST_ARCHIVED);
-
+        const laundryList = await Laundry.aggregate(() => GET_LAUNDRY_LIST_ARCHIVED);
         responseHelper(res, "Success get unarchived laundry list", 200, true, laundryList);
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
@@ -45,7 +46,9 @@ const getLaundryListArchived = async (req, res, next) => {
 
 const getLaundryDetail = async (req, res, next) => {
     try {
-
+        const existingLaundry = await Laundry.aggregate(GET_LAUNDRY_BY_RECEIPT_NUMBER(+req.params.receiptNumber));
+        if (existingLaundry.length === 0) errorHelper("Laundry not found", 404)
+        responseHelper(res, "Success get laundry detail", 200, true, existingLaundry[0])
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
@@ -66,7 +69,7 @@ const createLaundry = async (req, res, next) => {
         const { receiptNumber, branchId, weight, items, totalItems, customerName, customerAddress, customerContact, isPaidOff, services, isWeight } = req.body;
 
         const newLaundry = new Laundry({
-            receiptNumber: receiptNumber,
+            receiptNumber: +receiptNumber,
             branchId: branchId,
             customerName: customerName,
             customerAddress: customerAddress || "",
@@ -78,6 +81,7 @@ const createLaundry = async (req, res, next) => {
         const itemServiceList = [];
 
         if (isWeight == 'true') {
+            if (items?.length > 0) errorHelper("Items must be empty if you choose with weight not an items", 400);
             if (!weight) errorHelper("Weight must be exist", 422);
             const prices = await WeightPrice.find().sort({ maxWeight: 1 });
 
@@ -150,7 +154,7 @@ const createLaundry = async (req, res, next) => {
         }
 
         // laundry status
-        const existingStatusList = await StatusList.findOne({ name: "Diterima" });
+        const existingStatusList = await StatusList.findOne({ name: STATUS_LIST[0].name || "Diterima" });
         const newLaundryStatus = new LaundryStatus({
             laundryId: createdLaundry,
             statusId: existingStatusList,
@@ -159,6 +163,11 @@ const createLaundry = async (req, res, next) => {
 
         responseHelper(res, "Success create new laundry", 201, true)
     } catch (err) {
+        // Duplicate entry
+        if (err.code === 11000) {
+            err.message = "Cannot create laundry with same receipt number";
+            err.statusCode = 409;
+        }
         if (!err.statusCode) err.statusCode = 500;
         next(err);
     }
@@ -182,4 +191,15 @@ const deleteLaundry = async (req, res, next) => {
     }
 }
 
-module.exports = { getLaundryList, getLaundryListUnarchived, getLaundryListArchived, getLaundryDetail, getLaundryInfo, createLaundry, updateLaundry, deleteLaundry }
+const getLatestReceiptNumber = async (req, res, next) => {
+    try {
+        const lastReceiptNumber = await Laundry.findOne().sort({ createdAt: -1 }).limit(1);
+        responseHelper(res, "Success get latest receipt number", 200, true, { latestReceiptNumber: lastReceiptNumber?.receiptNumber || receiptNumberCounter });
+        if (!lastReceiptNumber) receiptNumberCounter++;
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
+module.exports = { getLaundryList, getLaundryListUnarchived, getLaundryListArchived, getLaundryDetail, getLaundryInfo, createLaundry, updateLaundry, deleteLaundry, getLatestReceiptNumber }
