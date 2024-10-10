@@ -1,6 +1,6 @@
 const express = require('express');
 const { createLaundry, getLaundryList, getLaundryListUnarchived, getLaundryListArchived, getLatestReceiptNumber, getLaundryDetail, updateIsPaidOffStatus, deleteLaundry, getLaundryInfo } = require('../controllers/laundryController');
-const { isAuth } = require('../middleware/authMiddleware');
+const { isAuth } = require('../middlewares/authMiddleware');
 const router = express.Router();
 
 router.get('/', isAuth, getLaundryList);

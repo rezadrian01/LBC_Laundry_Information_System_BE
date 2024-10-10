@@ -19,9 +19,10 @@ const itemServiceRoute = require('./routes/itemServiceRoute');
 const branchListRoute = require('./routes/branchListRoute');
 const statusListRoute = require('./routes/statusListRoute');
 const laundryRoute = require('./routes/laundryRoute');
+const laundryStatusRoute = require('./routes/laundryStatusRoute');
 
 // Middlewares
-const authMiddleware = require('./middleware/authMiddleware');
+const authMiddleware = require('./middlewares/authMiddleware');
 
 app.use(cors()).use(bodyParser.json()).use(bodyParser.urlencoded({ extended: true })).use(cookieParser())
 
@@ -36,6 +37,7 @@ app.use(`${VERSION}/item`, itemListRoute);
 app.use(`${VERSION}/itemService`, itemServiceRoute);
 app.use(`${VERSION}/branch`, branchListRoute);
 app.use(`${VERSION}/status`, statusListRoute);
+app.use(`${VERSION}/laundryStatus`, laundryStatusRoute);
 
 app.use((err, req, res, next) => {
     const data = err.data || [];
@@ -45,6 +47,6 @@ app.use((err, req, res, next) => {
 })
 
 mongoose.connect(process.env.MONGODB_URI).then(() => {
-    app.listen(process.env.PORT, () => console.log(`Server is running at ${process.env.NODE_ENV === 'production' ? 'port ' : 'http://localhost:'}${process.env.PORT}`))
+    app.listen(process.env.PORT, () => console.log(`Server is running at ${process.env.NODE_ENV === 'production' ? 'port ' : 'http://localhost:'}${process.env.PORT}`));
 }
 ).catch(err => console.log(err))
