@@ -1,10 +1,43 @@
+const mongoose = require('mongoose');
+
 const LaundryStatus = require('../models/LaundryStatus');
 const StatusList = require('../models/StatusList');
 const Laundry = require('../models/Laundry');
 const { errorHelper } = require('../helpers/errorHelper');
 const { responseHelper } = require('../helpers/responseHelper');
+const { GET_LAUNDRY_BY_STATUS } = require('../helpers/queryHelper');
 
 // get all laundry with status
+const getTotalLaundryPerStatus = async (req, res, next) => {
+    let statusList = await StatusList.find();
+    statusList = statusList.map(status => ({
+        _id: status._id,
+        name: status.name.split(" ").join("")
+    }));
+
+    const promises = statusList.map(async (status) => {
+        const total = await LaundryStatus.find({ statusId: status._id }).countDocuments();
+        status.total = total;
+        return { ...status }
+    })
+    const result = await Promise.all(promises);
+    responseHelper(res, "Success get total laundry per status", 200, true, result);
+}
+
+const getLaundryListByStatus = async (req, res, next) => {
+    try {
+        const { statusId } = req.params;
+        const existingStatus = await StatusList.findById(statusId);
+        if (!existingStatus) errorHelper("Status not found", 404);
+
+        const laundryList = await LaundryStatus.aggregate(GET_LAUNDRY_BY_STATUS(new mongoose.Types.ObjectId(statusId)));
+
+        responseHelper(res, "Success get laundry by status", 200, true, laundryList);
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err)
+    }
+}
 
 const updateLaundryStatus = async (req, res, next) => {
     try {
@@ -32,4 +65,4 @@ const updateLaundryStatus = async (req, res, next) => {
     }
 }
 
-module.exports = { updateLaundryStatus }
+module.exports = { getTotalLaundryPerStatus, getLaundryListByStatus, updateLaundryStatus }
