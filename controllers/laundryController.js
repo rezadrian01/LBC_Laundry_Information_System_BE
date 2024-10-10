@@ -55,9 +55,12 @@ const getLaundryDetail = async (req, res, next) => {
     }
 }
 
+// for customers
 const getLaundryInfo = async (req, res, next) => {
     try {
-
+        const existingLaundry = await Laundry.aggregate(GET_LAUNDRY_BY_RECEIPT_NUMBER(+req.params.receiptNumber));
+        if (existingLaundry.length === 0) errorHelper("Laundry not found", 404);
+        responseHelper(res, "Success get laundry info", 200, true, existingLaundry[0]);
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err)
@@ -173,9 +176,18 @@ const createLaundry = async (req, res, next) => {
     }
 }
 
-const updateLaundry = async (req, res, next) => {
+// only status and isPaidOff can change
+const updateIsPaidOffStatus = async (req, res, next) => {
     try {
+        const { receiptNumber } = req.params;
+        const { isPaidOff } = req.body;
+        const existingLaundry = await Laundry.findOne({ receiptNumber });
+        if (!existingLaundry) errorHelper("Laundry not found", 404);
+        if (typeof (isPaidOff) !== 'boolean') errorHelper("isPaid status must be boolean type", 400);
 
+        existingLaundry.isPaidOff = isPaidOff;
+        const updatedLaundry = await existingLaundry.save();
+        responseHelper(res, "Success update isPaidOff status", 200, true, updatedLaundry);
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
@@ -184,7 +196,24 @@ const updateLaundry = async (req, res, next) => {
 
 const deleteLaundry = async (req, res, next) => {
     try {
+        const { receiptNumber } = req.params;
+        // delete from Laundry collection
+        let laundryId;
+        const existingLaundry = await Laundry.findOne({ receiptNumber });
+        if (!existingLaundry) errorHelper("Laundry not found", 404);
+        laundryId = existingLaundry?._id;
+        await Laundry.findByIdAndDelete(laundryId);
 
+        // delete from LaundryService collection
+        await LaundryService.deleteMany({ laundryId });
+        // delete from ItemType collection
+        await ItemType.deleteMany({ laundryId });
+        // delete from LaundryStatus collection
+        await LaundryStatus.deleteOne({ laundryId });
+
+        // delete from Report collection if report have reference to Laundry
+
+        responseHelper(res, "Success delete laundry", 200, true)
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
@@ -202,4 +231,4 @@ const getLatestReceiptNumber = async (req, res, next) => {
     }
 }
 
-module.exports = { getLaundryList, getLaundryListUnarchived, getLaundryListArchived, getLaundryDetail, getLaundryInfo, createLaundry, updateLaundry, deleteLaundry, getLatestReceiptNumber }
+module.exports = { getLaundryList, getLaundryListUnarchived, getLaundryListArchived, getLaundryDetail, getLaundryInfo, createLaundry, updateIsPaidOffStatus, deleteLaundry, getLatestReceiptNumber }

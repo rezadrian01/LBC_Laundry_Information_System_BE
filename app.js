@@ -27,6 +27,7 @@ app.use(cors()).use(bodyParser.json()).use(bodyParser.urlencoded({ extended: tru
 
 
 app.use(`${VERSION}/auth`, authRoute);
+app.use(`${VERSION}/laundry`, laundryRoute);
 
 app.use('/', authMiddleware.isAuth);
 
@@ -35,7 +36,6 @@ app.use(`${VERSION}/item`, itemListRoute);
 app.use(`${VERSION}/itemService`, itemServiceRoute);
 app.use(`${VERSION}/branch`, branchListRoute);
 app.use(`${VERSION}/status`, statusListRoute);
-app.use(`${VERSION}/laundry`, laundryRoute);
 
 app.use((err, req, res, next) => {
     const data = err.data || [];

@@ -1,13 +1,17 @@
 const express = require('express');
-const { createLaundry, getLaundryList, getLaundryListUnarchived, getLaundryListArchived, getLatestReceiptNumber, getLaundryDetail } = require('../controllers/laundryController');
+const { createLaundry, getLaundryList, getLaundryListUnarchived, getLaundryListArchived, getLatestReceiptNumber, getLaundryDetail, updateIsPaidOffStatus, deleteLaundry, getLaundryInfo } = require('../controllers/laundryController');
+const { isAuth } = require('../middleware/authMiddleware');
 const router = express.Router();
 
-router.get('/', getLaundryList);
-router.get('/unarchived', getLaundryListUnarchived);
-router.get('/archived', getLaundryListArchived);
-router.get('/receiptNumber', getLatestReceiptNumber);
-router.get('/:receiptNumber', getLaundryDetail);
+router.get('/', isAuth, getLaundryList);
+router.get('/unarchived', isAuth, getLaundryListUnarchived);
+router.get('/archived', isAuth, getLaundryListArchived);
+router.get('/receiptNumber', isAuth, getLatestReceiptNumber);
+router.get('/info/:receiptNumber', getLaundryInfo);
+router.get('/:receiptNumber', isAuth, getLaundryDetail);
 
-router.post('/', createLaundry);
+router.put('/isPaidOff/:receiptNumber', isAuth, updateIsPaidOffStatus);
+router.post('/', isAuth, createLaundry);
+router.delete('/:receiptNumber', isAuth, deleteLaundry);
 
 module.exports = router;
