@@ -5,7 +5,7 @@ const ItemService = require('../models/ItemService');
 
 const getItemService = async (req, res, next) => {
     try {
-        const itemServices = await ItemService.find();
+        const itemServices = await ItemService.find().populate('itemId');
         responseHelper(res, "Success get item services", 200, true, itemServices);
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
