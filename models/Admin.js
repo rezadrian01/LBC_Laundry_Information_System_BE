@@ -5,6 +5,8 @@ const adminSchema = new Schema({
     username: {
         type: String,
         required: true,
+        index: true,
+        unique: true
     },
     password: {
         type: String,
@@ -12,7 +14,9 @@ const adminSchema = new Schema({
     },
     contact: {
         type: String,
-        required: true
+        required: true,
+        index: true,
+        unique: true
     },
     role: {
         type: String,
@@ -22,4 +26,7 @@ const adminSchema = new Schema({
     }
 })
 
-module.exports = mongoose.model("Admin", adminSchema);
+
+
+
+module.exports = { AdminSchema: mongoose.model("Admin", adminSchema), adminSchema };

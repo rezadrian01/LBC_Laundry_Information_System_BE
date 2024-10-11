@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { config } = require('dotenv');
-const Admin = require('../models/Admin');
+const { AdminSchema: Admin } = require('../models/Admin');
 
 const { errorHelper } = require('../helpers/errorHelper');
 
