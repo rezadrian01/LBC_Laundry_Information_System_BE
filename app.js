@@ -26,7 +26,10 @@ const adminRoute = require('./routes/adminRoute');
 // Middlewares
 const authMiddleware = require('./middlewares/authMiddleware');
 
-app.use(cors()).use(bodyParser.json()).use(bodyParser.urlencoded({ extended: true })).use(cookieParser())
+app.use(cors())
+    .use(bodyParser.json())
+    .use(bodyParser.urlencoded({ extended: true }))
+    .use(cookieParser())
 
 
 app.use(`${VERSION}/auth`, authRoute);
