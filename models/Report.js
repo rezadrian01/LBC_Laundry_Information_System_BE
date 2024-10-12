@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const reportSchema = new Schema({
     branchId: {
         type: Schema.Types.ObjectId,
-        ref: "Branch",
+        ref: "BranchList",
     },
     reportPeriod: {
         type: String,
@@ -29,4 +29,4 @@ const reportSchema = new Schema({
     }
 }, { timestamps: true })
 
-module.exports = mongoose.model("Report", reportSchema);
+module.exports = { ReportSchema: mongoose.model("Report", reportSchema), reportSchema };

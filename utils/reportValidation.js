@@ -5,6 +5,19 @@ const getLastDateOfMonth = (year, month) => {
     return moment([year, month - 1]).endOf('month').toDate();
 }
 
+const validateYearlyReport = (startDate, endDate) => {
+    const start = moment(startDate);
+    const end = moment(endDate);
+
+    if (start.date() !== 1 || start.month() !== 0) errorHelper("Start date must be first date on current year", 400);
+
+    if (end.date() !== 31 || end.month() !== 11) errorHelper("End date must be last date on current year", 400);
+
+    if (start.isAfter(end)) errorHelper("End date must be after start date", 400);
+
+    return true;
+}
+
 const validateMonthlyReport = (startDate, endDate) => {
     const start = moment(startDate);
     const end = moment(endDate);
@@ -46,4 +59,4 @@ const validateDailyReport = (startDate, endDate) => {
 
 
 
-module.exports = { validateMonthlyReport, validateWeeklyReport, validateDailyReport };
+module.exports = { validateYearlyReport, validateMonthlyReport, validateWeeklyReport, validateDailyReport };

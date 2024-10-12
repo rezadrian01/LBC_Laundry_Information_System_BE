@@ -981,4 +981,25 @@ const GET_LAUNDRY_BY_STATUS = (statusId) => {
     ]
 }
 
-module.exports = { GET_LAUNDRY_LIST, GET_LAUNDRY_LIST_UNARCHIVED, GET_LAUNDRY_LIST_ARCHIVED, GET_LAUNDRY_BY_RECEIPT_NUMBER, GET_LAUNDRY_BY_STATUS }
+const GET_TOTAL_INCOME_AND_TOTAL_TRANSACTION_FROM_LAUNDRY = (startDate, endDate, branchId = null) => {
+    return [
+        {
+            $match: {
+                createdAt: {
+                    $gte: startDate,
+                    $lte: endDate
+                }
+            }
+        },
+
+        {
+            $group: {
+                _id: branchId,
+                totalIncome: { $sum: '$totalPrice' },
+                totalTransactions: { $sum: 1 }
+            }
+        }
+    ]
+}
+
+module.exports = { GET_LAUNDRY_LIST, GET_LAUNDRY_LIST_UNARCHIVED, GET_LAUNDRY_LIST_ARCHIVED, GET_LAUNDRY_BY_RECEIPT_NUMBER, GET_LAUNDRY_BY_STATUS, GET_TOTAL_INCOME_AND_TOTAL_TRANSACTION_FROM_LAUNDRY }

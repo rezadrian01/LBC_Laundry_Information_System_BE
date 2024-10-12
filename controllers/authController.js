@@ -1,4 +1,4 @@
-const admin = require('../models/Admin');
+const { AdminSchema: Admin } = require('../models/Admin');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { errorHelper } = require('../helpers/errorHelper');
@@ -10,7 +10,7 @@ const login = async (req, res, next) => {
     try {
         const { username, password, isRemember } = req.body;
 
-        const existingAdmin = await admin.findOne({ username });
+        const existingAdmin = await Admin.findOne({ username });
         if (!existingAdmin) errorHelper("Admin not found", 404);
 
         const isPasswordCorrect = await bcrypt.compare(password, existingAdmin.password);

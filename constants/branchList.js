@@ -5,7 +5,7 @@ const BRANCH_LIST = [
     },
     {
         name: "Cabang 1",
-        address: "JL. Terusan Surabaya no.16 Klijen - Malang"
+        address: "JL. Terusan Surabaya no.16 Klojen - Malang"
     }
 ]
 
