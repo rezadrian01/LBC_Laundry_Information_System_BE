@@ -1,11 +1,19 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 const LaundryStatus = require('../models/LaundryStatus');
 const StatusList = require('../models/StatusList');
 const Laundry = require('../models/Laundry');
+const TrainData = require('../models/TrainData');
+
 const { errorHelper } = require('../helpers/errorHelper');
 const { responseHelper } = require('../helpers/responseHelper');
 const { GET_LAUNDRY_BY_STATUS } = require('../helpers/queryHelper');
+
+const { STATUS_LIST } = require('../constants/statusList');
+const { getTotalWeightOnBranch } = require('../helpers/laundryHelper');
+const LaundryService = require('../models/LaundryService');
+const { createTrainData } = require('./trainDataController');
 
 // get all laundry with status
 const getTotalLaundryPerStatus = async (req, res, next) => {
@@ -43,7 +51,7 @@ const updateLaundryStatus = async (req, res, next) => {
     try {
         const { laundryId } = req.params;
         const { newStatusId } = req.body;
-
+        ;
         if (!laundryId || !newStatusId) errorHelper("Missing laundryId or newStatusId", 400);
         const existingLaundry = await Laundry.findById(laundryId);
         if (!existingLaundry) errorHelper("Laundry not found", 404);
@@ -58,7 +66,12 @@ const updateLaundryStatus = async (req, res, next) => {
         const updatedLaundryStatus = await existingLaundryStatus.save();
         responseHelper(res, "Success update laundry status", 200, true, updatedLaundryStatus);
 
-        // Create train data if status === 'Sudah diambil
+
+        // Create train data if status === Siap diambil
+        const newStatus = await StatusList.findById(newStatusId);
+        if (newStatus.name === STATUS_LIST[3].name) {
+            createTrainData(existingLaundry);
+        }
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);

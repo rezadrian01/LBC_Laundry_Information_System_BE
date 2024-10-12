@@ -23,6 +23,7 @@ const laundryStatusRoute = require('./routes/laundryStatusRoute');
 const weightPriceRoute = require('./routes/weightPriceRoute');
 const adminRoute = require('./routes/adminRoute');
 const reportRoute = require('./routes/reportRoute');
+const trainDataRoute = require('./routes/trainDataRoute');
 
 // Middlewares
 const authMiddleware = require('./middlewares/authMiddleware');
@@ -46,7 +47,8 @@ app.use(`${VERSION}/status`, statusListRoute);
 app.use(`${VERSION}/laundryStatus`, laundryStatusRoute);
 app.use(`${VERSION}/weightPrice`, weightPriceRoute);
 app.use(`${VERSION}/admin`, adminRoute);
-app.use(`${VERSION}/report`, reportRoute)
+app.use(`${VERSION}/report`, reportRoute);
+app.use(`${VERSION}/trainData`, trainDataRoute);
 
 app.use((err, req, res, next) => {
     const data = err.data || [];

@@ -2,42 +2,47 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const trainDataSchema = new Schema({
+    branchId: {
+        type: Schema.Types.ObjectId,
+        ref: "BranchList",
+        required: true
+    },
     totalWeightOnBranch: {
         type: Number,
         required: true
     },
     isCuciBasah: {
-        type: Boolean,
+        type: Number,
         required: true,
         default: 0
     },
     isCuciKering: {
-        type: Boolean,
+        type: Number,
         required: true,
         default: 0
     },
     isCuciKeringSetrika: {
-        type: Boolean,
+        type: Number,
         required: true,
         default: 0
     },
     isSetrika: {
-        type: Boolean,
+        type: Number,
         required: true,
         default: 0
     },
     isKilat: {
-        type: Boolean,
+        type: Number,
         required: true,
         default: 0
     },
     isExpress: {
-        type: Boolean,
+        type: Number,
         required: true,
         default: 0
     },
     isReguler: {
-        type: Boolean,
+        type: Number,
         required: true,
         default: 0
     },

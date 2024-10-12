@@ -73,6 +73,12 @@ const createReport = async (req, res, next) => {
 
         if (isAllBranch && branchId) errorHelper("Branch id must be empty if the report is for all branch", 400);
 
+        if (branchId) {
+            const existingBranch = await Branch.findById(branchId);
+            if (!existingBranch) errorHelper("Branch not found", 404);
+        }
+
+        // validate if the same date and branch is already exist
         const existingReport = await Report.findOne({
             branchId: branchId || null,
             reportPeriod,
@@ -82,17 +88,21 @@ const createReport = async (req, res, next) => {
 
         if (existingReport) errorHelper(`This report has already exist`, 409);
 
-        // validate if the same date and branch is already exist
 
-        const [laundryReport] = await Laundry.aggregate(GET_TOTAL_INCOME_AND_TOTAL_TRANSACTION_FROM_LAUNDRY(new Date(startDate), new Date(endDate), isAllBranch ? null : branchId));
+        const laundryReports = await Laundry.aggregate(GET_TOTAL_INCOME_AND_TOTAL_TRANSACTION_FROM_LAUNDRY(new Date(startDate), new Date(endDate), isAllBranch ? null : '$branchId'));
+        console.log(laundryReports);
+
+        let laundryReportIndex;
+        if (!isAllBranch) laundryReportIndex = laundryReports.findIndex(report => report._id?.toString() === branchId)
+
 
         const newReport = new Report({
             branchId: isAllBranch ? null : branchId,
             reportPeriod,
             startDate,
             endDate,
-            totalIncome: laundryReport.totalIncome,
-            totalTransactions: laundryReport.totalTransactions
+            totalIncome: isAllBranch ? laundryReports[0].totalIncome : laundryReports[laundryReportIndex].totalIncome,
+            totalTransactions: isAllBranch ? laundryReports[0].totalTransactions : laundryReports[laundryReportIndex].totalTransactions
         })
         const createdReport = await newReport.save();
 
