@@ -25,4 +25,33 @@ const isAuth = async (req, res, next) => {
     }
 }
 
-module.exports = { isAuth }
+const isEmployee = async (req, res, next) => {
+    try {
+        if (req.currentUserData.role.toLowerCase() !== 'employee') errorHelper("Only employee can access this feature", 403);
+        next();
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
+const isAdmin = async (req, res, next) => {
+    try {
+        if (req.currentUserData.role.toLowerCase() !== 'admin') errorHelper("Ony admin can access this feature", 403);
+        next();
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+    }
+}
+
+const isOwner = async (req, res, next) => {
+    try {
+        if (req.currentUserData.role.toLowerCase() !== 'owner') errorHelper("Only owner can access this feature", 403);
+        next();
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
+module.exports = { isAuth, isEmployee, isAdmin, isOwner };

@@ -1,3 +1,5 @@
+const { validationResult } = require('express-validator')
+
 const Laundry = require('../models/Laundry');
 const LaundryService = require('../models/LaundryService');
 const ServiceList = require('../models/ServiceList');
@@ -69,6 +71,8 @@ const getLaundryInfo = async (req, res, next) => {
 
 const createLaundry = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { receiptNumber, branchId, weight, items, totalItems, customerName, customerAddress, customerContact, isPaidOff, services, isWeight } = req.body;
 
         const newLaundry = new Laundry({
@@ -179,6 +183,8 @@ const createLaundry = async (req, res, next) => {
 // only status and isPaidOff can change
 const updateIsPaidOffStatus = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { receiptNumber } = req.params;
         const { isPaidOff } = req.body;
         const existingLaundry = await Laundry.findOne({ receiptNumber });
