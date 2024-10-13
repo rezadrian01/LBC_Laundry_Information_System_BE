@@ -1,14 +1,18 @@
 const schedule = require('node-schedule');
 const moment = require('moment');
+
 const { createNewReport } = require('../helpers/reportHelper');
 const Branch = require('../models/BranchList');
-const { ReportSchema: Report } = require('../models/Report');
 const { checkExistingReport } = require('./reportValidation');
+const LaundryStatus = require('../models/LaundryStatus');
+const Laundry = require('../models/Laundry');
 
-const DAILY_REPORT_TIME = "* 00 00 * * *";
-const WEEKLY_REPORT_TIME = "* 00 00 * * 1";
-const MONTHLY_REPORT_TIME = "* * * 1 * *";
-const YEARLY_REPORT_TIME = "* 00 00 1 1 *";
+const DAILY_REPORT_TIME = "0 0 0 * * *";
+const WEEKLY_REPORT_TIME = "0 0 0 * * 1";
+const MONTHLY_REPORT_TIME = "0 0 0 1 * *";
+const YEARLY_REPORT_TIME = "0 0 0 1 1 *";
+
+const MONTHLY_ARCHIVE_LAUNDRY_TIME = "0 0 0 1 * *";
 
 
 const startScheduler = () => {
@@ -134,6 +138,30 @@ const startScheduler = () => {
             await createNewReport(null, reportPeriod, startDate, endDate, true);
         } catch (err) {
             console.log('Failed to create yearly report');
+            console.log(err);
+        }
+    })
+
+    const archiveLaundry = schedule.scheduleJob(MONTHLY_ARCHIVE_LAUNDRY_TIME, async () => {
+        try {
+            console.log('Archive laundry');
+            const limitLastUpdatedAt = moment().subtract(4, 'months').toDate();
+            const laundryStatusList = await LaundryStatus.find({
+                updatedAt: {
+                    $lt: limitLastUpdatedAt
+                }
+            })
+            const promises = laundryStatusList.map(async (status) => {
+                const existingLaundry = await Laundry.findById(status.laundryId);
+                if (!existingLaundry) return;
+                existingLaundry.isArchive = true;
+                await existingLaundry.save();
+                return;
+            })
+            await Promise.all(promises);
+
+        } catch (err) {
+            console.log("Failed to archive laundry");
             console.log(err);
         }
     })
