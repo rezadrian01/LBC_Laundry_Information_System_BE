@@ -81,9 +81,8 @@ const createItem = async (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { itemName } = req.body;
-        const validItemName = itemName.trim();
         const newItem = new ItemList({
-            name: validItemName
+            name: itemName
         })
         const createdItem = await newItem.save();
         responseHelper(res, "Success create item", 200, true, createdItem);
@@ -101,10 +100,7 @@ const updateItem = async (req, res, next) => {
         const existingItem = await ItemList.findById(itemId);
         if (!existingItem) errorHelper("Item not found", 404);
 
-        const validItemName = updatedItemName?.trim()
-        if (!validItemName) errorHelper("Invalid item name", 422);
-
-        existingItem.name = validItemName;
+        existingItem.name = updatedItemName;
         const updatedItem = await existingItem.save();
 
         responseHelper(res, "Success update item name", 200, true, { ...updatedItem._doc })

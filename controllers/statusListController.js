@@ -1,6 +1,7 @@
 const { responseHelper } = require('../helpers/responseHelper');
 const { errorHelper } = require('../helpers/errorHelper');
 const StatusList = require('../models/StatusList');
+const { validationResult } = require('express-validator');
 
 const getStatusList = async (req, res, next) => {
     try {
@@ -27,13 +28,12 @@ const getStatusDetail = async (req, res, next) => {
 
 const createStatus = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { statusName } = req.body;
 
-        const validStatusName = statusName?.trim();
-        if (!validStatusName) errorHelper("Invalid status name", 422);
-
         const newStatus = new StatusList({
-            name: validStatusName
+            name: statusName
         })
         const createdStatus = await newStatus.save();
         responseHelper(res, "Success create status", 201, true, createdStatus);
@@ -45,6 +45,8 @@ const createStatus = async (req, res, next) => {
 
 const updateStatus = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { statusId } = req.params;
         const { updatedStatusName } = req.body;
 
@@ -66,6 +68,8 @@ const updateStatus = async (req, res, next) => {
 // Must delete all laundry with this status
 const deleteStatus = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { statusId } = req.params;
         const existingStatus = await StatusList.findById(statusId);
         if (!existingStatus) errorHelper("Status not found", 404);

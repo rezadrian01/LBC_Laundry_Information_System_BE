@@ -2,6 +2,7 @@ const { responseHelper } = require('../helpers/responseHelper');
 const { errorHelper } = require('../helpers/errorHelper');
 const ItemList = require('../models/ItemList');
 const ItemService = require('../models/ItemService');
+const { validationResult } = require('express-validator');
 
 const getItemService = async (req, res, next) => {
     try {
@@ -26,21 +27,19 @@ const getItemServiceByItemId = async (req, res, next) => {
 
 const createItemService = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        console.log(errors);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { itemId } = req.params;
-        console.log(itemId)
         const { serviceName, servicePrice } = req.body;
         const existingItem = await ItemList.findById(itemId);
         if (!existingItem) errorHelper("Item not found", 404);
 
-        const validServiceName = serviceName?.trim();
-        const validServicePrice = servicePrice;
-
-        if (!validServiceName || !validServicePrice) errorHelper("Invalid service name or service price", 422);
 
         const newItemService = new ItemService({
             itemId: existingItem,
             name: serviceName,
-            price: servicePrice
+            price: +servicePrice
         })
         const createdItemService = await newItemService.save();
         responseHelper(res, "Success create item service", 201, true, createdItemService);
@@ -52,6 +51,8 @@ const createItemService = async (req, res, next) => {
 
 const updateItemService = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { itemServiceId } = req.params;
         const { updatedServiceName, updatedServicePrice } = req.body;
         const existingItemService = await ItemService.findById(itemServiceId);
@@ -75,6 +76,8 @@ const updateItemService = async (req, res, next) => {
 
 const deleteItemService = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { itemServiceId } = req.params;
         const existingItemService = await ItemService.findById(itemServiceId);
         if (!existingItemService) errorHelper("Item service not found", 404);
