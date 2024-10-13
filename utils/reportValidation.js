@@ -1,5 +1,6 @@
 const moment = require('moment');
 const { errorHelper } = require('../helpers/errorHelper');
+const { ReportSchema: Report } = require('../models/Report');
 
 const getLastDateOfMonth = (year, month) => {
     return moment([year, month - 1]).endOf('month').toDate();
@@ -51,12 +52,27 @@ const validateDailyReport = (startDate, endDate) => {
     const start = moment(startDate);
     const end = moment(endDate);
 
-    if (start.isSame(end, 'day')) errorHelper("Start date must be the same as end date", 400);
+
+    if (!start.isSame(end, 'day')) errorHelper("Start date must be the same as end date", 400);
     if (start.isAfter(end)) errorHelper("End date must be after start date", 400);
 
     return true;
 }
 
+const checkExistingReport = async (branchId, reportPeriod, startDate, endDate) => {
+    try {
+        const existingReport = await Report.findOne({
+            branchId,
+            reportPeriod,
+            startDate: new Date(startDate),
+            endDate: new Date(endDate),
+        })
+        return existingReport;
+    } catch (err) {
+        return null;
+    }
+}
 
 
-module.exports = { validateYearlyReport, validateMonthlyReport, validateWeeklyReport, validateDailyReport };
+
+module.exports = { validateYearlyReport, validateMonthlyReport, validateWeeklyReport, validateDailyReport, checkExistingReport };

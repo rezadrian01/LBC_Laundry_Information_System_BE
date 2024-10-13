@@ -6,6 +6,7 @@ const { responseHelper } = require('../helpers/responseHelper');
 const { validateDailyReport, validateWeeklyReport, validateMonthlyReport, validateYearlyReport } = require('../utils/reportValidation');
 const { GET_TOTAL_INCOME_AND_TOTAL_TRANSACTION_FROM_LAUNDRY } = require('../helpers/queryHelper');
 const { errorHelper } = require('../helpers/errorHelper');
+const { createNewReport } = require('../helpers/reportHelper');
 
 const getReportList = async (req, res, next) => {
     try {
@@ -64,48 +65,7 @@ const createReport = async (req, res, next) => {
     try {
         const { branchId, reportPeriod, startDate, endDate, isAllBranch } = req.body;
 
-        if (reportPeriod?.toLowerCase() === 'harian') validateDailyReport(startDate, endDate);
-        if (reportPeriod?.toLowerCase() === 'mingguan') validateWeeklyReport(startDate, endDate);
-        if (reportPeriod?.toLowerCase() === 'bulanan') validateMonthlyReport(startDate, endDate);
-        if (reportPeriod?.toLowerCase() === 'tahunan') validateYearlyReport(startDate, endDate);
-
-        if (!isAllBranch && !branchId) errorHelper("Branch id must be exist if the report is not for all branch", 400);
-
-        if (isAllBranch && branchId) errorHelper("Branch id must be empty if the report is for all branch", 400);
-
-        if (branchId) {
-            const existingBranch = await Branch.findById(branchId);
-            if (!existingBranch) errorHelper("Branch not found", 404);
-        }
-
-        // validate if the same date and branch is already exist
-        const existingReport = await Report.findOne({
-            branchId: branchId || null,
-            reportPeriod,
-            startDate: new Date(startDate),
-            endDate: new Date(endDate),
-        })
-
-        if (existingReport) errorHelper(`This report has already exist`, 409);
-
-
-        const laundryReports = await Laundry.aggregate(GET_TOTAL_INCOME_AND_TOTAL_TRANSACTION_FROM_LAUNDRY(new Date(startDate), new Date(endDate), isAllBranch ? null : '$branchId'));
-        console.log(laundryReports);
-
-        let laundryReportIndex;
-        if (!isAllBranch) laundryReportIndex = laundryReports.findIndex(report => report._id?.toString() === branchId)
-
-
-        const newReport = new Report({
-            branchId: isAllBranch ? null : branchId,
-            reportPeriod,
-            startDate,
-            endDate,
-            totalIncome: isAllBranch ? laundryReports[0].totalIncome : laundryReports[laundryReportIndex].totalIncome,
-            totalTransactions: isAllBranch ? laundryReports[0].totalTransactions : laundryReports[laundryReportIndex].totalTransactions
-        })
-        const createdReport = await newReport.save();
-
+        const createdReport = await createNewReport(branchId, reportPeriod, startDate, endDate, isAllBranch);
         responseHelper(res, "Success create report", 201, true, createdReport);
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
