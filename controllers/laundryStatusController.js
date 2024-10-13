@@ -1,20 +1,16 @@
 const mongoose = require('mongoose');
-const moment = require('moment');
+const { validationResult } = require('express-validator');
 
 const LaundryStatus = require('../models/LaundryStatus');
 const StatusList = require('../models/StatusList');
 const Laundry = require('../models/Laundry');
-const TrainData = require('../models/TrainData');
 
 const { errorHelper } = require('../helpers/errorHelper');
 const { responseHelper } = require('../helpers/responseHelper');
 const { GET_LAUNDRY_BY_STATUS } = require('../helpers/queryHelper');
 
 const { STATUS_LIST } = require('../constants/statusList');
-const { getTotalWeightOnBranch } = require('../helpers/laundryHelper');
-const LaundryService = require('../models/LaundryService');
 const { createTrainData } = require('./trainDataController');
-
 // get all laundry with status
 const getTotalLaundryPerStatus = async (req, res, next) => {
     let statusList = await StatusList.find();
@@ -49,6 +45,8 @@ const getLaundryListByStatus = async (req, res, next) => {
 
 const updateLaundryStatus = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { laundryId } = req.params;
         const { newStatusId } = req.body;
         ;

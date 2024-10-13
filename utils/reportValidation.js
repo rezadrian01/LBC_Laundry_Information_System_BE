@@ -1,6 +1,19 @@
 const moment = require('moment');
+const { body, param } = require('express-validator');
+
 const { errorHelper } = require('../helpers/errorHelper');
 const { ReportSchema: Report } = require('../models/Report');
+
+const createReportValidation = [
+    body('reportPeriod', "Report period must be provided").trim().notEmpty().escape().isIn(['Harian', 'Mingguan', 'Bulanan', 'Tahunan']).withMessage("Invalid report period"),
+    body('startDate', "Start date must be provided").trim().notEmpty().isDate().withMessage("Start date must be a valid date type"),
+    body('endDate', "End date must be provided").trim().notEmpty().isDate().withMessage("End date must be a valid date type"),
+    body('isAllBranch', 'Is all branch field must be provided').notEmpty().isBoolean().withMessage("Is all branch field must be type of boolean")
+]
+
+const deleteReportValidation = [
+    param('reportId', "Report ID must be provided").trim().notEmpty().isMongoId().withMessage("Invalid Mongodb ID")
+]
 
 const getLastDateOfMonth = (year, month) => {
     return moment([year, month - 1]).endOf('month').toDate();
@@ -75,4 +88,4 @@ const checkExistingReport = async (branchId, reportPeriod, startDate, endDate) =
 
 
 
-module.exports = { validateYearlyReport, validateMonthlyReport, validateWeeklyReport, validateDailyReport, checkExistingReport };
+module.exports = { createReportValidation, deleteReportValidation, validateYearlyReport, validateMonthlyReport, validateWeeklyReport, validateDailyReport, checkExistingReport };

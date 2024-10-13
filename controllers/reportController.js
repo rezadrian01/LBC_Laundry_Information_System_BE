@@ -1,10 +1,8 @@
+const { validationResult } = require('express-validator');
+
 const { ReportSchema: Report, reportSchema } = require('../models/Report');
-const Laundry = require('../models/Laundry');
-const Branch = require('../models/BranchList');
 
 const { responseHelper } = require('../helpers/responseHelper');
-const { validateDailyReport, validateWeeklyReport, validateMonthlyReport, validateYearlyReport } = require('../utils/reportValidation');
-const { GET_TOTAL_INCOME_AND_TOTAL_TRANSACTION_FROM_LAUNDRY } = require('../helpers/queryHelper');
 const { errorHelper } = require('../helpers/errorHelper');
 const { createNewReport } = require('../helpers/reportHelper');
 
@@ -63,6 +61,9 @@ const getReportDetail = async (req, res, next) => {
 
 const createReport = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+
         const { branchId, reportPeriod, startDate, endDate, isAllBranch } = req.body;
 
         const createdReport = await createNewReport(branchId, reportPeriod, startDate, endDate, isAllBranch);
@@ -75,6 +76,9 @@ const createReport = async (req, res, next) => {
 
 const deleteReport = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+
         const { reportId } = req.params;
         const existingReport = await Report.findById(reportId);
         if (!existingReport) errorHelper("Report not found", 404);

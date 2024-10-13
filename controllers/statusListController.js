@@ -53,10 +53,7 @@ const updateStatus = async (req, res, next) => {
         const existingStatus = await StatusList.findById(statusId);
         if (!existingStatus) errorHelper("Status not found", 404);
 
-        const validStatusName = updatedStatusName?.trim();
-        if (!validStatusName) errorHelper("Invalid status name", 422);
-
-        existingStatus.name = validStatusName;
+        existingStatus.name = updatedStatusName;
         const updatedStatus = await existingStatus.save();
         responseHelper(res, "Success update status", 200, true, updatedStatus);
     } catch (err) {

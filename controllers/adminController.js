@@ -1,9 +1,9 @@
 const bcrypt = require('bcryptjs');
+const { validationResult } = require('express-validator');
 
 const { errorHelper } = require('../helpers/errorHelper');
 const { responseHelper } = require('../helpers/responseHelper');
 const { AdminSchema: Admin, adminSchema } = require('../models/Admin');
-
 
 const getAdminList = async (req, res, next) => {
     try {
@@ -56,13 +56,13 @@ const getAdminByRole = async (req, res, next) => {
 
 const createAdmin = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+
         const { username, password, confirmPassword, contact, role } = req.body;
         let createdAdmin;
         if (password !== confirmPassword) errorHelper("Password must to be same", 400);
         const hashedPassword = await bcrypt.hash(password, 12);
-
-        // validation current admin role
-        if (req.currentUserData.role.toLowerCase() !== 'admin') errorHelper("Only admin can create new admin or employees", 400);
 
         if (role === 'employee') {
             const newAdmin = new Admin({
@@ -99,6 +99,9 @@ const createAdmin = async (req, res, next) => {
 
 const updateAdmin = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+
         const { username, oldPassword, newPassword, confirmNewPassword, contact } = req.body;
 
         const invalidNewPassword = newPassword && oldPassword !== newPassword && newPassword !== confirmNewPassword
@@ -127,6 +130,9 @@ const updateAdmin = async (req, res, next) => {
 
 const deleteAdmin = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+
         const { adminId } = req.params;
         const existingAdmin = await Admin.findById(adminId);
         if (!existingAdmin) errorHelper("Admin not found", 404);

@@ -1,3 +1,5 @@
+const { validationResult } = require('express-validator');
+
 const { errorHelper } = require('../helpers/errorHelper');
 const { responseHelper } = require('../helpers/responseHelper');
 const WeightPrice = require('../models/WeightPrice');
@@ -37,6 +39,9 @@ const getWeightPriceByWeight = async (req, res, next) => {
 
 const createWeightPrice = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+
         const { maxWeight, price } = req.body;
         const newWeightPrice = new WeightPrice({
             maxWeight,
@@ -52,6 +57,9 @@ const createWeightPrice = async (req, res, next) => {
 
 const updateWeightPrice = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+
         const { weightPriceId } = req.params;
         const { newMaxWeight, newPrice } = req.body;
         const existingWeightPrice = await WeightPrice.findById(weightPriceId);
@@ -68,6 +76,9 @@ const updateWeightPrice = async (req, res, next) => {
 
 const deleteWeightPrice = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+
         const { weightPriceId } = req.params;
         const existingWeightPrice = await WeightPrice.findById(weightPriceId);
         if (!existingWeightPrice) errorHelper("Weight price not found", 404);

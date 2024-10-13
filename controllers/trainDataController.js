@@ -1,4 +1,5 @@
 const moment = require('moment');
+const { validationResult } = require('express-validator');
 
 const { getTotalWeightOnBranch } = require('../helpers/laundryHelper');
 const TrainData = require('../models/TrainData');
@@ -54,6 +55,9 @@ const createTrainData = async (existingLaundry) => {
 
 const deleteTrainData = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+
         const { trainDataId } = req.params;
         const existingTrainData = await TrainData.findById(trainDataId);
         if (!existingTrainData) errorHelper("Train data not found", 404);
