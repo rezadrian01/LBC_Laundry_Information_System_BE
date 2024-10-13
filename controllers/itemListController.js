@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const { responseHelper } = require('../helpers/responseHelper');
 const { errorHelper } = require('../helpers/errorHelper');
 const ItemList = require('../models/ItemList');
+const { validationResult } = require('express-validator');
 
 const getItemList = async (req, res, next) => {
     try {
@@ -77,6 +78,8 @@ const searchItemList = async (req, res, next) => {
 
 const createItem = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { itemName } = req.body;
         const validItemName = itemName.trim();
         const newItem = new ItemList({
@@ -92,6 +95,8 @@ const createItem = async (req, res, next) => {
 
 const updateItem = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { itemId, updatedItemName } = req.body;
         const existingItem = await ItemList.findById(itemId);
         if (!existingItem) errorHelper("Item not found", 404);
@@ -111,6 +116,8 @@ const updateItem = async (req, res, next) => {
 
 const deleteItem = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { itemId } = req.body;
         const existingItem = await ItemList.findById(itemId);
         if (!existingItem) errorHelper("Item not found", 404);

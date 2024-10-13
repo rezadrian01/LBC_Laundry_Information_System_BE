@@ -54,4 +54,15 @@ const isOwner = async (req, res, next) => {
     }
 }
 
-module.exports = { isAuth, isEmployee, isAdmin, isOwner };
+const isOwnerOrAdmin = async (req, res, next) => {
+    try {
+        const { currentUserData } = req;
+        if (currentUserData.role.toLowerCase() !== 'admin' && currentUserData.role.toLowerCase() !== 'owner') errorHelper("Only owner or admin can access this feature", 403);
+        next();
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
+module.exports = { isAuth, isEmployee, isAdmin, isOwner, isOwnerOrAdmin };

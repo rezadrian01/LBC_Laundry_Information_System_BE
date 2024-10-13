@@ -1,11 +1,14 @@
 const express = require('express');
-const { getItemList, updateItem, createItem, deleteItem, searchItemList, getItemById } = require('../controllers/itemListController');
 const router = express.Router();
 
+const { getItemList, updateItem, createItem, deleteItem, searchItemList, getItemById } = require('../controllers/itemListController');
+const { isOwnerOrAdmin } = require('../middlewares/authMiddleware');
+const { createItemListValidation, updateItemListValidation, deleteItemListValidation } = require('../utils/itemListValidation');
+
 router.get('/', getItemList);
-router.post('/', createItem);
-router.put('/', updateItem);
-router.delete('/', deleteItem);
+router.post('/', isOwnerOrAdmin, createItemListValidation, createItem);
+router.put('/', isOwnerOrAdmin, updateItemListValidation, updateItem);
+router.delete('/', isOwnerOrAdmin, deleteItemListValidation, deleteItem);
 
 router.get('/search/:searchTerm', searchItemList);
 router.get('/:itemId', getItemById);

@@ -2,12 +2,15 @@ const { AdminSchema: Admin } = require('../models/Admin');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { errorHelper } = require('../helpers/errorHelper');
-const { config } = require('dotenv')
+const { config } = require('dotenv');
+const { validationResult } = require('express-validator');
 
 
 config();
 const login = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { username, password, isRemember } = req.body;
 
         const existingAdmin = await Admin.findOne({ username });
