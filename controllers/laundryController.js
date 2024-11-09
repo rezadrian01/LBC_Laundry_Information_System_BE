@@ -1,4 +1,5 @@
-const { validationResult } = require('express-validator')
+const { validationResult } = require('express-validator');
+const mongoose = require('mongoose');
 
 const Laundry = require('../models/Laundry');
 const LaundryService = require('../models/LaundryService');
@@ -12,7 +13,7 @@ const { STATUS_LIST } = require('../constants/statusList');
 
 const { responseHelper } = require('../helpers/responseHelper');
 const { errorHelper } = require('../helpers/errorHelper');
-const { GET_LAUNDRY_LIST, GET_LAUNDRY_LIST_UNARCHIVED, GET_LAUNDRY_LIST_ARCHIVED, GET_LAUNDRY_BY_RECEIPT_NUMBER } = require('../helpers/queryHelper');
+const { GET_LAUNDRY_LIST, GET_LAUNDRY_LIST_UNARCHIVED, GET_LAUNDRY_LIST_ARCHIVED, GET_LAUNDRY_BY_RECEIPT_NUMBER, GET_LAUNDRY_BY_ID } = require('../helpers/queryHelper');
 
 let receiptNumberCounter = 0;
 
@@ -46,7 +47,7 @@ const getLaundryListArchived = async (req, res, next) => {
     }
 }
 
-const getLaundryDetail = async (req, res, next) => {
+const getLaundryDetailByReceiptNumber = async (req, res, next) => {
     try {
         const existingLaundry = await Laundry.aggregate(GET_LAUNDRY_BY_RECEIPT_NUMBER(+req.params.receiptNumber));
         if (existingLaundry.length === 0) errorHelper("Laundry not found", 404)
@@ -56,6 +57,20 @@ const getLaundryDetail = async (req, res, next) => {
         next(err);
     }
 }
+
+const getLaundryDetailById = async (req, res, next) => {
+    try {
+        const laundryId = new mongoose.Types.ObjectId(req.params.laundryId);
+        const existingLaundry = await Laundry.aggregate(GET_LAUNDRY_BY_ID(laundryId));
+        if (existingLaundry.length === 0) errorHelper("Laundry not found", 404);
+        responseHelper(res, "Success get laundry detail", 200, true, existingLaundry[0]);
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
+
 
 // for customers
 const getLaundryInfo = async (req, res, next) => {
@@ -237,4 +252,15 @@ const getLatestReceiptNumber = async (req, res, next) => {
     }
 }
 
-module.exports = { getLaundryList, getLaundryListUnarchived, getLaundryListArchived, getLaundryDetail, getLaundryInfo, createLaundry, updateIsPaidOffStatus, deleteLaundry, getLatestReceiptNumber }
+module.exports = {
+    getLaundryList,
+    getLaundryListUnarchived,
+    getLaundryListArchived,
+    getLaundryDetailByReceiptNumber,
+    getLaundryDetailById,
+    getLaundryInfo,
+    createLaundry,
+    updateIsPaidOffStatus,
+    deleteLaundry,
+    getLatestReceiptNumber
+};

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { validationResult } = require('express-validator');
+const { capital } = require('case')
 
 const LaundryStatus = require('../models/LaundryStatus');
 const StatusList = require('../models/StatusList');
@@ -11,12 +12,13 @@ const { GET_LAUNDRY_BY_STATUS } = require('../helpers/queryHelper');
 
 const { STATUS_LIST } = require('../constants/statusList');
 const { createTrainData } = require('./trainDataController');
+
 // get all laundry with status
 const getTotalLaundryPerStatus = async (req, res, next) => {
     let statusList = await StatusList.find();
     statusList = statusList.map(status => ({
         _id: status._id,
-        name: status.name.split(" ").join("")
+        name: capital(status.name)
     }));
 
     const promises = statusList.map(async (status) => {
@@ -63,7 +65,6 @@ const updateLaundryStatus = async (req, res, next) => {
         existingLaundryStatus.statusId = existingNewStatus;
         const updatedLaundryStatus = await existingLaundryStatus.save();
         responseHelper(res, "Success update laundry status", 200, true, updatedLaundryStatus);
-
 
         // Create train data if status === Siap diambil
         const newStatus = await StatusList.findById(newStatusId);
