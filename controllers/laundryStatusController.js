@@ -53,6 +53,7 @@ const updateLaundryStatus = async (req, res, next) => {
         const { newStatusId } = req.body;
         ;
         if (!laundryId || !newStatusId) errorHelper("Missing laundryId or newStatusId", 400);
+
         const existingLaundry = await Laundry.findById(laundryId);
         if (!existingLaundry) errorHelper("Laundry not found", 404);
 

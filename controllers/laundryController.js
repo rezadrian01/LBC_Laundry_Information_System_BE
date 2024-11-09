@@ -201,7 +201,8 @@ const updateIsPaidOffStatus = async (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { receiptNumber } = req.params;
-        const { isPaidOff } = req.body;
+        let { isPaidOff } = req.body;
+        isPaidOff = isPaidOff == 'true' ? true : false;
         const existingLaundry = await Laundry.findOne({ receiptNumber });
         if (!existingLaundry) errorHelper("Laundry not found", 404);
         if (typeof (isPaidOff) !== 'boolean') errorHelper("isPaid status must be boolean type", 400);
