@@ -31,9 +31,12 @@ const trainDataRoute = require('./routes/trainDataRoute');
 const authMiddleware = require('./middlewares/authMiddleware');
 
 // Scheduler
-startScheduler()
+startScheduler();
 
-app.use(cors())
+app.use(cors({
+    credentials: true,
+    origin: process.env.FRONTEND_URL
+}))
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({ extended: true }))
     .use(cookieParser())

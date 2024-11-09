@@ -24,7 +24,17 @@ const login = async (req, res, next) => {
             username: existingAdmin.username
         }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRY })
 
-        res.cookie("token", token, { httpOnly: true }).status(200).json({ success: true, message: "Login success", token: isRemember ? token : null })
+        res.cookie("token", token, { httpOnly: true }).status(200).json({ success: true, message: "Login success", token: isRemember ? token : null, adminData: { id: existingAdmin.id, role: existingAdmin.role } });
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+};
+
+const checkToken = async (req, res, next) => {
+    try {
+        const { id, role } = req.currentUserData;
+        res.status(200).json({ success: true, message: "Token is valid", adminData: { id, role } });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
@@ -34,7 +44,7 @@ const login = async (req, res, next) => {
 const logout = async (req, res, next) => {
     try {
         const { cookie } = req.headers;
-        const token = cookie.split("=")[1]
+        const token = cookie?.split("=")[1]
         if (!token) errorHelper("No token provided", 401);
         res.cookie("token", "").status(200).json({ success: true, message: "Logout success" })
     } catch (err) {
@@ -43,4 +53,4 @@ const logout = async (req, res, next) => {
     }
 }
 
-module.exports = { login, logout }
+module.exports = { login, checkToken, logout };
