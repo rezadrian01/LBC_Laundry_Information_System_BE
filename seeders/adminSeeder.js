@@ -1,4 +1,4 @@
-const Admin = require('../models/Admin');
+const { AdminSchema: Admin } = require('../models/Admin');
 const { config } = require('dotenv');
 const bcrypt = require('bcryptjs');
 

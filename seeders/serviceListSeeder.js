@@ -7,7 +7,8 @@ const seedServiceList = async () => {
 
     for (const service of SERVICE_LIST) {
         const newService = new ServiceList({
-            name: service.name
+            name: service.name,
+            price: service.price
         })
         await newService.save();
     }

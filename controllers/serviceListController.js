@@ -17,9 +17,10 @@ const createServiceList = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
-        const { serviceName } = req.body;
+        const { serviceName, servicePrice } = req.body;
         const newService = new ServiceList({
-            name: serviceName
+            name: serviceName,
+            price: +servicePrice
         })
         await newService.save();
         responseHelper(res, "Success add new service", 201, true, { ...newService._doc })
@@ -33,11 +34,13 @@ const updateServiceName = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
-        const { serviceId, updatedServiceName } = req.body;
+        const { serviceId } = req.params;
+        const { updatedServiceName, updatedServicePrice } = req.body;
         const existingService = await ServiceList.findById(serviceId);
         if (!existingService) errorHelper("Service not found", 404);
 
         existingService.name = updatedServiceName;
+        existingService.price = +updatedServicePrice;
         const updatedService = await existingService.save();
         responseHelper(res, "Success update service name", 200, true, { ...updatedService._doc })
     } catch (err) {
@@ -50,7 +53,7 @@ const deleteServiceName = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
-        const { serviceId } = req.body;
+        const { serviceId } = req.params;
         const existingService = await ServiceList.findById(serviceId);
         if (!existingService) errorHelper("Service not found", 404);
         await ServiceList.findByIdAndDelete(serviceId);

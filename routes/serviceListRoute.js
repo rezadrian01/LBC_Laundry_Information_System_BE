@@ -7,7 +7,7 @@ const { createServiceListValidation, updateServiceListValidation, deleteServiceL
 
 router.get('/', getServiceList);
 router.post('/', isOwnerOrAdmin, createServiceListValidation, createServiceList);
-router.put('/', isOwnerOrAdmin, updateServiceListValidation, updateServiceName);
-router.delete('/', isOwnerOrAdmin, deleteServiceListValidation, deleteServiceName);
+router.put('/:serviceId', isOwnerOrAdmin, updateServiceListValidation, updateServiceName);
+router.delete('/:serviceId', isOwnerOrAdmin, deleteServiceListValidation, deleteServiceName);
 
 module.exports = router
