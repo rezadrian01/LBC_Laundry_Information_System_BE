@@ -1,8 +1,9 @@
+const { validationResult } = require('express-validator');
 const mongoose = require('mongoose')
 const { responseHelper } = require('../helpers/responseHelper');
 const { errorHelper } = require('../helpers/errorHelper');
 const ItemList = require('../models/ItemList');
-const { validationResult } = require('express-validator');
+const ItemService = require('../models/ItemService');
 const { GET_ITEM_LIST_GROUP_BY_SERVICES } = require('../helpers/queryHelper');
 
 const getItemList = async (req, res, next) => {
@@ -103,6 +104,35 @@ const createItem = async (req, res, next) => {
     }
 }
 
+const createItemWithServices = async (req, res, next) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+        const { itemName, originalPrice, hangPrice, dryCleanPrice } = req.body;
+        const newItem = new ItemList({
+            name: itemName
+        });
+        const createdItem = await newItem.save();
+        const services = ["Original (Lipat)", "Gantung", "Dry Clean"];
+        const prices = [originalPrice, hangPrice, dryCleanPrice];
+        const promises = services.map(async (services, index) => {
+            const price = prices[index];
+            if (!price) return;
+            const newItemService = new ItemService({
+                itemId: createdItem,
+                name: services,
+                price
+            });
+            await newItemService.save();
+        });
+        await Promise.all(promises);
+        responseHelper(res, "Success create item with services", 201, true);
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 const updateItem = async (req, res, next) => {
     try {
         const errors = validationResult(req);
@@ -122,6 +152,45 @@ const updateItem = async (req, res, next) => {
     }
 }
 
+const updateItemWithService = async (req, res, next) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+        const { itemId } = req.params;
+        const { originalPrice, hangPrice, dryCleanPrice } = req.body;
+
+        const existingItem = await ItemList.findById(itemId);
+        if (!existingItem) errorHelper("Item not found", 404);
+
+        const existingItemService = await ItemService.find({ itemId });
+
+        const services = ["Original (Lipat)", "Gantung", "Dry Clean"];
+        const prices = [originalPrice, hangPrice, dryCleanPrice];
+
+        const promises = services.map(async (service, index) => {
+            const price = prices[index];
+            if (!price) return;
+            const currentItemService = existingItemService.find(itemService => itemService.name === service);
+            if (!currentItemService) {
+                const newItemService = new ItemService({
+                    itemId: existingItem,
+                    name: service,
+                    price
+                });
+                await newItemService.save();
+            } else {
+                currentItemService.price = price;
+                await currentItemService.save();
+            }
+        });
+        await Promise.all(promises);
+        responseHelper(res, "Success update item with services", 200, true);
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 const deleteItem = async (req, res, next) => {
     try {
         const errors = validationResult(req);
@@ -131,6 +200,8 @@ const deleteItem = async (req, res, next) => {
         if (!existingItem) errorHelper("Item not found", 404);
         await ItemList.findByIdAndDelete(itemId);
 
+        await ItemService.deleteMany({ itemId });
+
         responseHelper(res, "Success delete item", 200, true);
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
@@ -138,4 +209,14 @@ const deleteItem = async (req, res, next) => {
     }
 }
 
-module.exports = { getItemList, getItemListGroupByServices, getItemById, searchItemList, createItem, updateItem, deleteItem };
+module.exports = {
+    getItemList,
+    getItemListGroupByServices,
+    getItemById,
+    searchItemList,
+    createItem,
+    createItemWithServices,
+    updateItem,
+    updateItemWithService,
+    deleteItem
+};
