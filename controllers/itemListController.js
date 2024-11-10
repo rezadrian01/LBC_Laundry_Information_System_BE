@@ -107,7 +107,8 @@ const updateItem = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
-        const { itemId, updatedItemName } = req.body;
+        const { itemId } = req.params;
+        const { updatedItemName } = req.body;
         const existingItem = await ItemList.findById(itemId);
         if (!existingItem) errorHelper("Item not found", 404);
 
@@ -125,7 +126,7 @@ const deleteItem = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
-        const { itemId } = req.body;
+        const { itemId } = req.params;
         const existingItem = await ItemList.findById(itemId);
         if (!existingItem) errorHelper("Item not found", 404);
         await ItemList.findByIdAndDelete(itemId);

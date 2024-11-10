@@ -8,8 +8,8 @@ const { createItemListValidation, updateItemListValidation, deleteItemListValida
 router.get('/', getItemList);
 router.get('/group', getItemListGroupByServices);
 router.post('/', isOwnerOrAdmin, createItemListValidation, createItem);
-router.put('/', isOwnerOrAdmin, updateItemListValidation, updateItem);
-router.delete('/', isOwnerOrAdmin, deleteItemListValidation, deleteItem);
+router.put('/:itemId', isOwnerOrAdmin, updateItemListValidation, updateItem);
+router.delete('/:itemId', isOwnerOrAdmin, deleteItemListValidation, deleteItem);
 
 router.get('/search/:searchTerm', searchItemList);
 router.get('/:itemId', getItemById);
