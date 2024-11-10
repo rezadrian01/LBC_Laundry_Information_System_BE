@@ -3,6 +3,7 @@ const { responseHelper } = require('../helpers/responseHelper');
 const { errorHelper } = require('../helpers/errorHelper');
 const ItemList = require('../models/ItemList');
 const { validationResult } = require('express-validator');
+const { GET_ITEM_LIST_GROUP_BY_SERVICES } = require('../helpers/queryHelper');
 
 const getItemList = async (req, res, next) => {
     try {
@@ -11,6 +12,16 @@ const getItemList = async (req, res, next) => {
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err)
+    }
+}
+
+const getItemListGroupByServices = async (req, res, next) => {
+    try {
+        const itemList = await ItemList.aggregate(GET_ITEM_LIST_GROUP_BY_SERVICES());
+        responseHelper(res, "Success get item list group by services", 200, true, itemList);
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
     }
 }
 
@@ -126,4 +137,4 @@ const deleteItem = async (req, res, next) => {
     }
 }
 
-module.exports = { getItemList, getItemById, searchItemList, createItem, updateItem, deleteItem }
+module.exports = { getItemList, getItemListGroupByServices, getItemById, searchItemList, createItem, updateItem, deleteItem };

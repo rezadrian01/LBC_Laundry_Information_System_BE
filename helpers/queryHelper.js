@@ -1209,6 +1209,19 @@ const GET_TOTAL_WEIGHT_ON_BRANCH = () => {
     ]
 }
 
+const GET_ITEM_LIST_GROUP_BY_SERVICES = () => {
+    return [
+        {
+            $lookup: {
+                from: 'itemservices',
+                localField: '_id',
+                foreignField: 'itemId',
+                as: 'services'
+            }
+        }
+    ];
+}
+
 module.exports = {
     GET_LAUNDRY_LIST,
     GET_LAUNDRY_LIST_UNARCHIVED,
@@ -1217,5 +1230,6 @@ module.exports = {
     GET_LAUNDRY_BY_ID,
     GET_LAUNDRY_BY_STATUS,
     GET_TOTAL_INCOME_AND_TOTAL_TRANSACTION_FROM_LAUNDRY,
-    GET_TOTAL_WEIGHT_ON_BRANCH
+    GET_TOTAL_WEIGHT_ON_BRANCH,
+    GET_ITEM_LIST_GROUP_BY_SERVICES
 };

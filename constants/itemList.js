@@ -3,11 +3,11 @@ const ITEM_LIST = [
         name: "Baju Pesta Anak",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 10000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 15000
             },
             {
@@ -20,11 +20,11 @@ const ITEM_LIST = [
         name: "Celana Panjang",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 10000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 15000
             },
             {
@@ -37,11 +37,11 @@ const ITEM_LIST = [
         name: "Celana Pendek",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 8000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 10000
             },
             {
@@ -54,11 +54,11 @@ const ITEM_LIST = [
         name: "Blazer",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 10000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 15000
             },
             {
@@ -71,11 +71,11 @@ const ITEM_LIST = [
         name: "Jas Pria/Wanita",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 15000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 20000
             },
             {
@@ -88,11 +88,11 @@ const ITEM_LIST = [
         name: "Jacket Biasa",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 10000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 15000
             },
             {
@@ -105,11 +105,11 @@ const ITEM_LIST = [
         name: "Jacket Besar",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 15000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 20000
             },
             {
@@ -122,11 +122,11 @@ const ITEM_LIST = [
         name: "Jacket Kulit",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 20000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 25000
             },
             {
@@ -139,11 +139,11 @@ const ITEM_LIST = [
         name: "Kebaya",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 10000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 15000
             },
             {
@@ -156,11 +156,11 @@ const ITEM_LIST = [
         name: "Kemeja Pendek",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 8500
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 10000
             },
             {
@@ -173,11 +173,11 @@ const ITEM_LIST = [
         name: "Kemeja Panjang",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 10000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 15000
             },
             {
@@ -190,11 +190,11 @@ const ITEM_LIST = [
         name: "Kemeja Batik",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 10000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 15000
             },
             {
@@ -207,11 +207,11 @@ const ITEM_LIST = [
         name: "Dress Pendek",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 10000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 15000
             },
             {
@@ -224,11 +224,11 @@ const ITEM_LIST = [
         name: "Dress Panjang",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 15000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 20000
             },
             {
@@ -241,11 +241,11 @@ const ITEM_LIST = [
         name: "Mukena/stel",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 10000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 15000
             },
             {
@@ -258,11 +258,11 @@ const ITEM_LIST = [
         name: "Rok Pendek",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 5000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 8000
             },
             {
@@ -275,11 +275,11 @@ const ITEM_LIST = [
         name: "Rok Panjang",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 10000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 15000
             },
             {
@@ -292,11 +292,11 @@ const ITEM_LIST = [
         name: "Selendang/Kain",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 5000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 8000
             },
             {
@@ -309,11 +309,11 @@ const ITEM_LIST = [
         name: "Sweeter",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 10000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 15000
             },
             {
@@ -326,11 +326,11 @@ const ITEM_LIST = [
         name: "T-Shirt Kaos",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 8000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 10000
             },
             {
@@ -343,11 +343,11 @@ const ITEM_LIST = [
         name: "Sajadah",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 10000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 15000
             },
             {
@@ -360,11 +360,11 @@ const ITEM_LIST = [
         name: "Sarung",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 5000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 8000
             },
             {
@@ -377,11 +377,11 @@ const ITEM_LIST = [
         name: "Taplak Kecil",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 5000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 10000
             },
             {
@@ -394,11 +394,11 @@ const ITEM_LIST = [
         name: "Taplak Besar",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 10000
             },
             {
-                service: "Laundry (Gantung)",
+                service: "Gantung",
                 price: 15000
             },
             {
@@ -411,7 +411,7 @@ const ITEM_LIST = [
         name: "Helm Kecil",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 25000
             }
         ]
@@ -420,7 +420,7 @@ const ITEM_LIST = [
         name: "Helm Besar",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 30000
             }
         ]
@@ -429,7 +429,7 @@ const ITEM_LIST = [
         name: "Wenter Pendek",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 30000
             }
         ]
@@ -438,7 +438,7 @@ const ITEM_LIST = [
         name: "Wenter Panjang",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 35000
             }
         ]
@@ -447,7 +447,7 @@ const ITEM_LIST = [
         name: "Wenter Jaket",
         price: [
             {
-                service: "Laundry (Lipat)",
+                service: "Original (Lipat)",
                 price: 40000
             }
         ]
@@ -456,7 +456,7 @@ const ITEM_LIST = [
         name: "S. Bantal/Guling",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 3000
             }
         ]
@@ -465,7 +465,7 @@ const ITEM_LIST = [
         name: "Bantal/Guling",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 25000
             }
         ]
@@ -474,7 +474,7 @@ const ITEM_LIST = [
         name: "Bed Cover",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 35000
             }
         ]
@@ -483,7 +483,7 @@ const ITEM_LIST = [
         name: "Bed Cover Besar",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 40000
             }
         ]
@@ -492,7 +492,7 @@ const ITEM_LIST = [
         name: "Boneka Mini",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 10000
             }
         ]
@@ -501,7 +501,7 @@ const ITEM_LIST = [
         name: "Boneka Kecil",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 15000
             }
         ]
@@ -510,7 +510,7 @@ const ITEM_LIST = [
         name: "Boneka Sedang",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 25000
             }
         ]
@@ -519,7 +519,7 @@ const ITEM_LIST = [
         name: "Boneka Besar",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 39000
             }
         ]
@@ -528,7 +528,7 @@ const ITEM_LIST = [
         name: "Boneka Super Besar",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 35000
             }
         ]
@@ -537,7 +537,7 @@ const ITEM_LIST = [
         name: "Boneka Extra Besar",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 50000
             }
         ]
@@ -546,7 +546,7 @@ const ITEM_LIST = [
         name: "Handuk Besar",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 10000
             }
         ]
@@ -555,7 +555,7 @@ const ITEM_LIST = [
         name: "Handuk Sedang",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 8000
             }
         ]
@@ -564,7 +564,7 @@ const ITEM_LIST = [
         name: "Handuk Kecil",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 5000
             }
         ]
@@ -573,7 +573,7 @@ const ITEM_LIST = [
         name: "Hambal",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 35000
             }
         ]
@@ -582,7 +582,7 @@ const ITEM_LIST = [
         name: "Kain/m2",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 5000
             }
         ]
@@ -591,7 +591,7 @@ const ITEM_LIST = [
         name: "Karpet Babut/m2",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 15000
             }
         ]
@@ -600,7 +600,7 @@ const ITEM_LIST = [
         name: "Karpet Tebal/m2",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 10000
             }
         ]
@@ -609,7 +609,7 @@ const ITEM_LIST = [
         name: "Karpet Tipis",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 8000
             }
         ]
@@ -618,7 +618,7 @@ const ITEM_LIST = [
         name: "K. Gordyn Tebal/m2",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 7000
             }
         ]
@@ -627,7 +627,7 @@ const ITEM_LIST = [
         name: "K. Gordyn Tipis/m2",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 5000
             }
         ]
@@ -636,7 +636,7 @@ const ITEM_LIST = [
         name: "Koper",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 30000
             }
         ]
@@ -645,7 +645,7 @@ const ITEM_LIST = [
         name: "Koper Sedang",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 40000
             }
         ]
@@ -654,7 +654,7 @@ const ITEM_LIST = [
         name: "Koper Besar",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 50000
             }
         ]
@@ -663,7 +663,7 @@ const ITEM_LIST = [
         name: "Koper Super Besar",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 70000
             }
         ]
@@ -672,7 +672,7 @@ const ITEM_LIST = [
         name: "Sprei Biasa",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 10000
             }
         ]
@@ -681,7 +681,7 @@ const ITEM_LIST = [
         name: "Sprei Rombe",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 15000
             }
         ]
@@ -690,7 +690,7 @@ const ITEM_LIST = [
         name: "Selimut Tebal Besar",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 25000
             }
         ]
@@ -699,7 +699,7 @@ const ITEM_LIST = [
         name: "Selimut Sedang",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 20000
             }
         ]
@@ -708,7 +708,7 @@ const ITEM_LIST = [
         name: "Selimut Kecil",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 15000
             }
         ]
@@ -717,7 +717,7 @@ const ITEM_LIST = [
         name: "Selimut Tipis",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 10000
             }
         ]
@@ -726,7 +726,7 @@ const ITEM_LIST = [
         name: "Sepatu Kets",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 25000
             }
         ]
@@ -735,7 +735,7 @@ const ITEM_LIST = [
         name: "Sepatu Kets Besar",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 30000
             }
         ]
@@ -744,7 +744,7 @@ const ITEM_LIST = [
         name: "Sepatu Kulit/boots",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 35000
             }
         ]
@@ -753,7 +753,7 @@ const ITEM_LIST = [
         name: "Tas Kecil",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 10000
             }
         ]
@@ -762,7 +762,7 @@ const ITEM_LIST = [
         name: "Tas Sedang",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 15000
             }
         ]
@@ -771,7 +771,7 @@ const ITEM_LIST = [
         name: "Tas Besar",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 25000
             }
         ]
@@ -780,7 +780,7 @@ const ITEM_LIST = [
         name: "Tikar",
         price: [
             {
-                service: "Default",
+                service: "Original (Lipat)",
                 price: 30000
             }
         ]
