@@ -1,5 +1,9 @@
 const { body, param } = require("express-validator");
 
+const getServiceDetailValidation = [
+    param('serviceId', "Service id must be provided").trim().notEmpty().isMongoId().withMessage("Invalid Mongodb ID")
+]
+
 const createServiceListValidation = [
     body('serviceName', "Service name must be provided").trim().notEmpty().escape(),
     body('servicePrice', "Service price must be provided").isNumeric(),
@@ -15,4 +19,9 @@ const deleteServiceListValidation = [
     param('serviceId', "Service ID must be provided").trim().notEmpty().isMongoId().withMessage("Invalid Mongodb ID"),
 ]
 
-module.exports = { createServiceListValidation, updateServiceListValidation, deleteServiceListValidation };
+module.exports = {
+    getServiceDetailValidation,
+    createServiceListValidation,
+    updateServiceListValidation,
+    deleteServiceListValidation
+};

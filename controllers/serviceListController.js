@@ -13,6 +13,20 @@ const getServiceList = async (req, res, next) => {
     }
 }
 
+const getServiceDetail = async (req, res, next) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+        const { serviceId } = req.params;
+        const existingService = await ServiceList.findById(serviceId);
+        if (!existingService) errorHelper("Service not found", 404);
+        responseHelper(res, "Success get service detail", 200, true, existingService);
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 const createServiceList = async (req, res, next) => {
     try {
         const errors = validationResult(req);
@@ -65,4 +79,4 @@ const deleteServiceName = async (req, res, next) => {
 }
 
 
-module.exports = { createServiceList, getServiceList, updateServiceName, deleteServiceName }
+module.exports = { getServiceList, getServiceDetail, createServiceList, updateServiceName, deleteServiceName };
