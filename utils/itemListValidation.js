@@ -5,9 +5,9 @@ const createItemListValidation = [
 ]
 const createItemWithServicesValidation = [
     body('itemName', "Item name must be provided").trim().notEmpty().escape(),
-    body('originalPrice', "Invalid original price").optional().trim().isNumeric().escape(),
-    body('hangPrice', "Invalid hang price").optional().trim().isNumeric().escape(),
-    body('dryCleanPrice', "Invalid original price").optional().trim().isNumeric().escape(),
+    body('originalPrice', "Invalid original price").optional({ checkFalsy: true }).trim().isNumeric().escape(),
+    body('hangPrice', "Invalid hang price").optional({ checkFalsy: true }).trim().isNumeric().escape(),
+    body('dryCleanPrice', "Invalid original price").optional({ checkFalsy: true }).trim().isNumeric().escape(),
 ]
 
 const updateItemListValidation = [
@@ -17,9 +17,9 @@ const updateItemListValidation = [
 
 const updateItemWithServicesValidation = [
     param('itemId', "Item ID must be provided").trim().notEmpty().isMongoId().escape(),
-    body('originalPrice', "Invalid original price").optional().trim().isNumeric().escape(),
-    body('hangPrice', "Invalid hang price").optional().trim().isNumeric().escape(),
-    body('dryCleanPrice', "Invalid original price").optional().trim().isNumeric().escape(),
+    body('originalPrice', "Invalid original price").optional({ checkFalsy: true }).trim().isNumeric().escape(),
+    body('hangPrice', "Invalid hang price").optional({ checkFalsy: true }).trim().isNumeric().escape(),
+    body('dryCleanPrice', "Invalid original price").optional({ checkFalsy: true }).trim().isNumeric().escape(),
 ]
 
 const deleteItemListValidation = [

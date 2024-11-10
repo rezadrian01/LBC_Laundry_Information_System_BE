@@ -24,7 +24,10 @@ const login = async (req, res, next) => {
             username: existingAdmin.username
         }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRY })
 
-        res.cookie("token", token, { httpOnly: true }).status(200).json({ success: true, message: "Login success", token: isRemember ? token : null, adminData: { id: existingAdmin.id, role: existingAdmin.role } });
+        res
+            .cookie("token", token, { httpOnly: true })
+            .status(200)
+            .json({ success: true, message: "Login success", token: isRemember ? token : null, adminData: { id: existingAdmin.id, role: existingAdmin.role } });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);

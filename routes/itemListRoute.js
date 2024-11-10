@@ -15,6 +15,7 @@ router.put('/:itemId', isOwnerOrAdmin, updateItemListValidation, updateItem);
 router.put('/group/:itemId', isOwnerOrAdmin, updateItemWithServicesValidation, updateItemWithService);
 
 router.delete('/:itemId', isOwnerOrAdmin, deleteItemListValidation, deleteItem);
+router.delete('/group/:itemId', isOwnerOrAdmin, deleteItemListValidation, deleteItem);
 
 router.get('/search/:searchTerm', searchItemList);
 router.get('/:itemId', getItemById);

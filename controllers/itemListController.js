@@ -157,7 +157,8 @@ const updateItemWithService = async (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { itemId } = req.params;
-        const { originalPrice, hangPrice, dryCleanPrice } = req.body;
+        const { updatedOriginalPrice, updatedHangPrice, updatedDryCleanPrice } = req.body;
+        console.log(updatedOriginalPrice, updatedHangPrice, updatedDryCleanPrice);
 
         const existingItem = await ItemList.findById(itemId);
         if (!existingItem) errorHelper("Item not found", 404);
@@ -165,7 +166,7 @@ const updateItemWithService = async (req, res, next) => {
         const existingItemService = await ItemService.find({ itemId });
 
         const services = ["Original (Lipat)", "Gantung", "Dry Clean"];
-        const prices = [originalPrice, hangPrice, dryCleanPrice];
+        const prices = [updatedOriginalPrice, updatedHangPrice, updatedDryCleanPrice];
 
         const promises = services.map(async (service, index) => {
             const price = prices[index];

@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const { getWeightPriceList, getWeightPriceByWeight, createWeightPrice, updateWeightPrice, deleteWeightPrice } = require('../controllers/weightPriceController');
+const { getWeightPriceList, getWeightPriceByWeight, createWeightPrice, updateWeightPrice, deleteWeightPrice, getWeightPriceById, getWeightPriceByIdWithPreviousPrice } = require('../controllers/weightPriceController');
 const { isOwnerOrAdmin } = require('../middlewares/authMiddleware');
-const { createWeightPriceValidation, updateWeightPriceValidation, deleteWeightPriceValidation } = require('../utils/weightPriceValidation');
+const { createWeightPriceValidation, updateWeightPriceValidation, deleteWeightPriceValidation, getWeightPriceByIdValidation } = require('../utils/weightPriceValidation');
 
 router.get('/', getWeightPriceList);
 router.get('/weight', getWeightPriceByWeight);
+router.get('/:weightPriceId', getWeightPriceByIdValidation, getWeightPriceById);
+router.get('/withPrevious/:weightPriceId', getWeightPriceByIdValidation, getWeightPriceByIdWithPreviousPrice);
 
 router.post('/', isOwnerOrAdmin, createWeightPriceValidation, createWeightPrice);
 router.put('/:weightPriceId', isOwnerOrAdmin, updateWeightPriceValidation, updateWeightPrice);
