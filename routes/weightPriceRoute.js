@@ -6,7 +6,7 @@ const { isOwnerOrAdmin } = require('../middlewares/authMiddleware');
 const { createWeightPriceValidation, updateWeightPriceValidation, deleteWeightPriceValidation, getWeightPriceByIdValidation } = require('../utils/weightPriceValidation');
 
 router.get('/', getWeightPriceList);
-router.get('/weight', getWeightPriceByWeight);
+router.post('/weight', getWeightPriceByWeight);
 router.get('/:weightPriceId', getWeightPriceByIdValidation, getWeightPriceById);
 router.get('/withPrevious/:weightPriceId', getWeightPriceByIdValidation, getWeightPriceByIdWithPreviousPrice);
 

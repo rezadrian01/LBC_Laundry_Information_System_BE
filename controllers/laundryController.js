@@ -245,7 +245,7 @@ const deleteLaundry = async (req, res, next) => {
 const getLatestReceiptNumber = async (req, res, next) => {
     try {
         const lastReceiptNumber = await Laundry.findOne().sort({ createdAt: -1 }).limit(1);
-        responseHelper(res, "Success get latest receipt number", 200, true, { latestReceiptNumber: lastReceiptNumber?.receiptNumber || receiptNumberCounter });
+        responseHelper(res, "Success get latest receipt number", 200, true, { latestReceiptNumber: lastReceiptNumber?.receiptNumber + 1 || receiptNumberCounter });
         if (!lastReceiptNumber) receiptNumberCounter++;
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;

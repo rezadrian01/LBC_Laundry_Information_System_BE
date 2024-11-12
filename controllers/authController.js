@@ -36,8 +36,11 @@ const login = async (req, res, next) => {
 
 const checkToken = async (req, res, next) => {
     try {
-        const { id, role } = req.currentUserData;
-        res.status(200).json({ success: true, message: "Token is valid", adminData: { id, role } });
+        const { _id } = req.currentUserData;
+        const existingAdmin = await Admin.findById(_id).populate("latestBranchId");
+        if (!existingAdmin) errorHelper("Admin not found", 404);
+
+        res.status(200).json({ success: true, message: "Token is valid", adminData: { ...existingAdmin._doc, password: null } });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
