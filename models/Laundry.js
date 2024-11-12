@@ -10,7 +10,7 @@ const laundrySchema = new Schema({
     },
     branchId: {
         type: Schema.Types.ObjectId,
-        ref: "Branch",
+        ref: "BranchList",
         required: true
     },
     weight: {

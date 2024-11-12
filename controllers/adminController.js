@@ -4,6 +4,8 @@ const { validationResult } = require('express-validator');
 const { errorHelper } = require('../helpers/errorHelper');
 const { responseHelper } = require('../helpers/responseHelper');
 const { AdminSchema: Admin, adminSchema } = require('../models/Admin');
+const BranchList = require('../models/BranchList');
+const { BRANCH_LIST } = require('../constants/branchList');
 
 const getAdminList = async (req, res, next) => {
     try {
@@ -63,13 +65,16 @@ const createAdmin = async (req, res, next) => {
         let createdAdmin;
         if (password !== confirmPassword) errorHelper("Password must to be same", 400);
         const hashedPassword = await bcrypt.hash(password, 12);
+        const defaultBranch = await BranchList.findOne({ name: BRANCH_LIST[0].name });
+        if (!defaultBranch) errorHelper("Default branch not found", 404);
 
         if (role === 'employee') {
             const newAdmin = new Admin({
                 username: username,
                 password: hashedPassword,
                 contact,
-                role
+                role,
+                latestBranchId: defaultBranch
             });
             createdAdmin = await newAdmin.save();
         } else if (role === 'admin') {
@@ -128,6 +133,26 @@ const updateAdmin = async (req, res, next) => {
     }
 }
 
+const changeLatestBranch = async (req, res, next) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+        const { branchId } = req.params;
+        const existingAdmin = await Admin.findById(req.currentUserData._id);
+        if (!existingAdmin) errorHelper("Admin not found", 404);
+
+        const existingBranch = await BranchList.findById(branchId);
+        if (!existingBranch) errorHelper("Branch not found", 404);
+
+        existingAdmin.latestBranchId = existingBranch;
+        await existingAdmin.save();
+        responseHelper(res, "Success update latest branch", 200, true, { ...existingAdmin._doc, password: null });
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 const deleteAdmin = async (req, res, next) => {
     try {
         const errors = validationResult(req);
@@ -146,4 +171,4 @@ const deleteAdmin = async (req, res, next) => {
     }
 }
 
-module.exports = { getAdminList, getAdminDetail, getRoleList, getAdminByRole, createAdmin, updateAdmin, deleteAdmin };
+module.exports = { getAdminList, getAdminDetail, getRoleList, getAdminByRole, createAdmin, updateAdmin, changeLatestBranch, deleteAdmin };

@@ -17,8 +17,12 @@ const updateAdminValidation = [
     body('contact', "Contact must be provided").trim().notEmpty().escape(),
 ]
 
+const updateLatestBranchValidation = [
+    param('branchId', "Branch ID must be provided").trim().notEmpty().isMongoId().withMessage("Invalid MongoDB id")
+]
+
 const deleteAdminValidation = [
     param('adminId', "AdminId must be provided").trim().notEmpty().isMongoId().withMessage("Invalid Mongodb Id")
 ]
 
-module.exports = { createAdminValidation, updateAdminValidation, deleteAdminValidation };
+module.exports = { createAdminValidation, updateAdminValidation, updateLatestBranchValidation, deleteAdminValidation };

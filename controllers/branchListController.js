@@ -1,7 +1,8 @@
+const { validationResult } = require('express-validator');
 const { responseHelper } = require('../helpers/responseHelper');
 const { errorHelper } = require('../helpers/errorHelper');
 const Branch = require('../models/BranchList');
-const { validationResult } = require('express-validator');
+const { BRANCH_LIST } = require('../constants/branchList');
 
 const getBranchlist = async (req, res, next) => {
     try {
@@ -19,6 +20,17 @@ const getBranchDetail = async (req, res, next) => {
         const existingBranch = await Branch.findById(branchId);
         if (!existingBranch) errorHelper("Branch not found", 404);
         responseHelper(res, "Success get branch detail", 200, true, existingBranch);
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
+const getDefaultBranch = async (req, res, next) => {
+    try {
+        const defaultBranch = await Branch.findOne({ name: BRANCH_LIST[0].name });
+        if (!defaultBranch) errorHelper("Branch not found", 404);
+        responseHelper(res, "Success get default branch", 200, true, defaultBranch);
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
@@ -80,4 +92,4 @@ const deleteBranch = async (req, res, next) => {
     }
 }
 
-module.exports = { getBranchlist, getBranchDetail, createBranch, updateBranch, deleteBranch }
+module.exports = { getBranchlist, getBranchDetail, getDefaultBranch, createBranch, updateBranch, deleteBranch };

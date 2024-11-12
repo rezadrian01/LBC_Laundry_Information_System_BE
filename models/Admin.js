@@ -23,6 +23,11 @@ const adminSchema = new Schema({
         enum: ['owner', 'admin', 'employee'],
         default: 'employee',
         required: true
+    },
+    latestBranchId: {
+        type: Schema.Types.ObjectId,
+        ref: "BranchList",
+        required: true
     }
 })
 

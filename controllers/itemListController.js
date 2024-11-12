@@ -158,7 +158,6 @@ const updateItemWithService = async (req, res, next) => {
         if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { itemId } = req.params;
         const { updatedOriginalPrice, updatedHangPrice, updatedDryCleanPrice } = req.body;
-        console.log(updatedOriginalPrice, updatedHangPrice, updatedDryCleanPrice);
 
         const existingItem = await ItemList.findById(itemId);
         if (!existingItem) errorHelper("Item not found", 404);

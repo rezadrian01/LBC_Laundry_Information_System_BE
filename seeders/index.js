@@ -12,14 +12,14 @@ const { seedStatusList } = require('./statusListSeeder');
 config();
 const seeder = async () => {
     await mongoose.connect(process.env.MONGODB_URI);
-    await seedAdmin();
-    await seedOwner();
+    await seedBranchList();
     await seedServiceList();
     await seedItemList();
     await seedItemService();
-    await seedBranchList();
     await seedWeightPrice();
     await seedStatusList();
+    await seedAdmin();
+    await seedOwner();
 }
 
 seeder().then(() => {
