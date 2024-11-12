@@ -1213,12 +1213,30 @@ const GET_ITEM_LIST_GROUP_BY_SERVICES = () => {
     return [
         {
             $lookup: {
-                from: 'itemservices',
-                localField: '_id',
-                foreignField: 'itemId',
-                as: 'services'
+                from: "itemservices",
+                localField: "_id",
+                foreignField: "itemId",
+                as: "services"
+            }
+        },
+        {
+            $addFields: {
+                services: {
+                    $map: {
+                        input: '$services',
+                        as: 'services',
+                        in: {
+                            _id: '$$services._id',
+                            itemId: '$_id',
+                            itemName: '$name',
+                            serviceName: '$$services.name',
+                            servicePrice: '$$services.price'
+                        }
+                    }
+                }
             }
         }
+
     ];
 }
 

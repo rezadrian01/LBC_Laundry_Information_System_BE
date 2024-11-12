@@ -14,6 +14,38 @@ const getItemService = async (req, res, next) => {
     }
 }
 
+const getItemServiceByItemServiceId = async (req, res, next) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+        const { itemServiceId } = req.params;
+
+        const existingItemService = await ItemService.findById(itemServiceId);
+        if (!existingItemService) errorHelper("Item service not found", 404);
+
+        responseHelper(res, "Success get item service by item service id", 200, true, existingItemService);
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+};
+
+const getItemServiceByItemIdAndServiceName = async (req, res, next) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+
+        const { itemId } = req.params;
+        const { serviceName } = req.body;
+        const existingItemService = await ItemService.findOne({ itemId, name: serviceName });
+        if (!existingItemService) errorHelper("Item service not found", 404);
+        responseHelper(res, "Success get item service by item service id and service name", 200, true, existingItemService);
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 const getItemServiceByItemId = async (req, res, next) => {
     try {
         const { itemId } = req.params;
@@ -90,4 +122,12 @@ const deleteItemService = async (req, res, next) => {
     }
 }
 
-module.exports = { getItemService, getItemServiceByItemId, createItemService, updateItemService, deleteItemService }
+module.exports = {
+    getItemService,
+    getItemServiceByItemServiceId,
+    getItemServiceByItemIdAndServiceName,
+    getItemServiceByItemId,
+    createItemService,
+    updateItemService,
+    deleteItemService
+};
