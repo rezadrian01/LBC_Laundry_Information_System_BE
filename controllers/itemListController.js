@@ -79,7 +79,23 @@ const searchItemList = async (req, res, next) => {
                 $project: {
                     'services.itemId': 0
                 }
-            },
+            }, {
+                $addFields: {
+                    services: {
+                        $map: {
+                            input: '$services',
+                            as: 'services',
+                            in: {
+                                _id: '$$services._id',
+                                itemId: '$_id',
+                                itemName: '$name',
+                                serviceName: '$$services.name',
+                                servicePrice: '$$services.price'
+                            }
+                        }
+                    }
+                }
+            }
         ])
         responseHelper(res, "Success search item", 200, true, itemList)
     } catch (err) {
@@ -157,12 +173,13 @@ const updateItemWithService = async (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
         const { itemId } = req.params;
-        const { updatedOriginalPrice, updatedHangPrice, updatedDryCleanPrice } = req.body;
+        const { updatedItemName, updatedOriginalPrice, updatedHangPrice, updatedDryCleanPrice } = req.body;
 
         const existingItem = await ItemList.findById(itemId);
         if (!existingItem) errorHelper("Item not found", 404);
 
         const existingItemService = await ItemService.find({ itemId });
+        existingItem.name = updatedItemName;
 
         const services = ["Original (Lipat)", "Gantung", "Dry Clean"];
         const prices = [updatedOriginalPrice, updatedHangPrice, updatedDryCleanPrice];
@@ -184,6 +201,7 @@ const updateItemWithService = async (req, res, next) => {
             }
         });
         await Promise.all(promises);
+        await existingItem.save()
         responseHelper(res, "Success update item with services", 200, true);
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;

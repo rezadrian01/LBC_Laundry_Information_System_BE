@@ -152,15 +152,17 @@ const createLaundry = async (req, res, next) => {
         const createdLaundry = await newLaundry.save();
 
         // service laundry
-        for (const key of Object.keys(services)) {
-            const existingService = await ServiceList.findById(services[key].id)
-            if (!existingService) errorHelper("Service not found", 404);
+        if (isWeight == 'true') {
+            for (const key of Object.keys(services)) {
+                const existingService = await ServiceList.findById(services[key].id);
+                if (!existingService) errorHelper("Service not found", 404);
 
-            const newLaundryService = new LaundryService({
-                laundryId: createdLaundry,
+                const newLaundryService = new LaundryService({
+                    laundryId: createdLaundry,
                 serviceId: existingService
             })
             await newLaundryService.save();
+        }
         }
 
         // item type

@@ -35,7 +35,10 @@ startScheduler();
 
 app.use(cors({
     credentials: true,
-    origin: process.env.FRONTEND_URL
+    // origin: process.env.FRONTEND_URL
+    origin: (origin, callback) => {
+        callback(null, true);
+    }
 }))
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({ extended: true }))
