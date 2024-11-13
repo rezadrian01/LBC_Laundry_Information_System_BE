@@ -13,7 +13,8 @@ const { STATUS_LIST } = require('../constants/statusList');
 
 const { responseHelper } = require('../helpers/responseHelper');
 const { errorHelper } = require('../helpers/errorHelper');
-const { GET_LAUNDRY_LIST, GET_LAUNDRY_LIST_UNARCHIVED, GET_LAUNDRY_LIST_ARCHIVED, GET_LAUNDRY_BY_RECEIPT_NUMBER, GET_LAUNDRY_BY_ID } = require('../helpers/queryHelper');
+const { GET_LAUNDRY_LIST, GET_LAUNDRY_LIST_UNARCHIVED, GET_LAUNDRY_LIST_ARCHIVED, GET_LAUNDRY_BY_RECEIPT_NUMBER, GET_LAUNDRY_BY_ID, GET_LAUNDRY_LIST_UNARCHIVED_BY_BRANCH } = require('../helpers/queryHelper');
+const BranchList = require('../models/BranchList');
 
 let receiptNumberCounter = 0;
 
@@ -44,6 +45,23 @@ const getLaundryListArchived = async (req, res, next) => {
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err)
+    }
+}
+
+const getUnarchivedLaundryListByBranch = async (req, res, next) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
+
+        const branchId = new mongoose.Types.ObjectId(req.params.branchId);
+        const existingBranch = await BranchList.findById(branchId);
+        if (!existingBranch) errorHelper("Branch not found", 422);
+
+        const laundryList = await Laundry.aggregate(GET_LAUNDRY_LIST_UNARCHIVED_BY_BRANCH(branchId));
+        responseHelper(res, "Success get unarchived laundry list by branchId", 200, true, laundryList);
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
     }
 }
 
@@ -259,6 +277,7 @@ module.exports = {
     getLaundryList,
     getLaundryListUnarchived,
     getLaundryListArchived,
+    getUnarchivedLaundryListByBranch,
     getLaundryDetailByReceiptNumber,
     getLaundryDetailById,
     getLaundryInfo,

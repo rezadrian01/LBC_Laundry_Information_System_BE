@@ -84,7 +84,8 @@ const createAdmin = async (req, res, next) => {
                 username: username,
                 password: hashedPassword,
                 contact,
-                role
+                role,
+                latestBranchId: defaultBranch
             });
             createdAdmin = await newAdmin.save();
         }

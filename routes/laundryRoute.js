@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 
-const { createLaundry, getLaundryList, getLaundryListUnarchived, getLaundryListArchived, getLatestReceiptNumber, getLaundryDetailByReceiptNumber, updateIsPaidOffStatus, deleteLaundry, getLaundryInfo, getLaundryDetailById } = require('../controllers/laundryController');
+const { createLaundry, getLaundryList, getLaundryListUnarchived, getLaundryListArchived, getLatestReceiptNumber, getLaundryDetailByReceiptNumber, updateIsPaidOffStatus, deleteLaundry, getLaundryInfo, getLaundryDetailById, getUnarchivedLaundryListByBranch } = require('../controllers/laundryController');
 const { isAuth } = require('../middlewares/authMiddleware');
 const { createLaundryValidation, updateLaundryValidation } = require('../utils/laundryValidation');
 
@@ -10,6 +10,7 @@ const upload = multer();
 
 router.get('/', isAuth, getLaundryList);
 router.get('/unarchived', isAuth, getLaundryListUnarchived);
+router.get('/unarchived/:branchId', isAuth, getUnarchivedLaundryListByBranch);
 router.get('/archived', isAuth, getLaundryListArchived);
 router.get('/receiptNumber', isAuth, getLatestReceiptNumber);
 router.get('/info/:receiptNumber', getLaundryInfo);
