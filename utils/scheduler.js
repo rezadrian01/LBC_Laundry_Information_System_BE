@@ -13,17 +13,17 @@ const generateStartDateAndEndDate = (period) => {
     let startDate, endDate;
 
     if (period === 'day') {
-        startDate = moment().subtract(1, 'days').startOf('day').format('YYYY-MM-DD');
-        endDate = moment().subtract(1, 'days').endOf('day').format('YYYY-MM-DD');
+        startDate = moment().subtract(1, 'days').startOf('day').toDate();
+        endDate = moment().subtract(1, 'days').endOf('day').toDate();
     } else if (period === 'ISOWeek') {
-        startDate = moment().subtract(1, 'weeks').startOf('ISOWeek').format('YYYY-MM-DD');
-        endDate = moment().subtract(1, 'weeks').endOf('ISOWeek').format('YYYY-MM-DD');
+        startDate = moment().subtract(1, 'weeks').startOf('ISOWeek').toDate();
+        endDate = moment().subtract(1, 'weeks').endOf('ISOWeek').toDate();
     } else if (period === 'month') {
-        startDate = moment().subtract(1, 'months').startOf('month').format('YYYY-MM-DD');
-        endDate = moment().subtract(1, 'months').endOf('month').format('YYYY-MM-DD');
+        startDate = moment().subtract(1, 'months').startOf('month').toDate();
+        endDate = moment().subtract(1, 'months').endOf('month').toDate();
     } else if (period === 'year') {
-        startDate = moment().subtract(1, 'years').startOf('year').format('YYYY-MM-DD');
-        endDate = moment().subtract(1, 'years').endOf('year').format('YYYY-MM-DD');
+        startDate = moment().subtract(1, 'years').startOf('year').toDate();
+        endDate = moment().subtract(1, 'years').endOf('year').toDate();
     } else {
         throw new Error('Invalid period specified');
     }
