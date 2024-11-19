@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 
 const { responseHelper } = require('./helpers/responseHelper');
-const { startScheduler } = require('./utils/scheduler');
+// const { startScheduler } = require('./utils/scheduler');
 
 
 config();
@@ -31,7 +31,7 @@ const trainDataRoute = require('./routes/trainDataRoute');
 const authMiddleware = require('./middlewares/authMiddleware');
 
 // Scheduler
-startScheduler();
+// startScheduler();
 
 app.use(cors({
     credentials: true,
@@ -47,6 +47,7 @@ app.use(cors({
 
 app.use(`${VERSION}/auth`, authRoute);
 app.use(`${VERSION}/laundry`, laundryRoute);
+
 
 app.use('/', authMiddleware.isAuth);
 

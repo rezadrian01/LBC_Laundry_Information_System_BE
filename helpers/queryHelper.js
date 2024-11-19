@@ -1373,7 +1373,7 @@ const GET_LAUNDRY_BY_STATUS = (statusId) => {
     ]
 }
 
-const GET_TOTAL_INCOME_AND_TOTAL_TRANSACTION_FROM_LAUNDRY = (startDate, endDate, branchId = null) => {
+const GET_TOTAL_INCOME_AND_TOTAL_TRANSACTION_FROM_LAUNDRY = (startDate, endDate) => {
     return [
         {
             $match: {
@@ -1383,11 +1383,10 @@ const GET_TOTAL_INCOME_AND_TOTAL_TRANSACTION_FROM_LAUNDRY = (startDate, endDate,
                 }
             }
         },
-
         {
             $group: {
-                _id: branchId,
-                totalIncome: { $sum: '$totalPrice' },
+                _id: "$branchId",
+                totalIncome: { $sum: "$totalPrice" },
                 totalTransactions: { $sum: 1 }
             }
         }

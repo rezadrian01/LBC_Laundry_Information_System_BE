@@ -26,7 +26,7 @@ const login = async (req, res, next) => {
 
         res
             .status(200)
-            .cookie("token", token, { httpOnly: true })
+            .cookie("token", token, { httpOnly: true, sameSite: "None", secure: true })
             .json({ success: true, message: "Login success", token: isRemember ? token : null, adminData: { ...existingAdmin._doc, password: null } });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;

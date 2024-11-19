@@ -26,22 +26,32 @@ const createNewReport = async (branchId = null, reportPeriod, startDate, endDate
 
     if (existingReport) errorHelper(`This report has already exist`, 409);
 
+    const laundryReports = await Laundry.aggregate(
+        GET_TOTAL_INCOME_AND_TOTAL_TRANSACTION_FROM_LAUNDRY(
+            new Date(startDate),
+            new Date(endDate)
+        )
+    );
 
-    const laundryReports = await Laundry.aggregate(GET_TOTAL_INCOME_AND_TOTAL_TRANSACTION_FROM_LAUNDRY(new Date(startDate), new Date(endDate), isAllBranch ? null : '$branchId'));
 
     let totalIncome = 0;
     let totalTransactions = 0;
 
-    if (laundryReports.length > 0) {
-        if (isAllBranch) {
-            totalIncome = laundryReports[0]?.totalIncome || 0;
-            totalTransactions = laundryReports[0]?.totalTransactions || 0;
-        } else {
-            const laundryReportIndex = laundryReports.findIndex(report => report._id?.toString() === branchId.toString())
-            totalIncome = laundryReports[laundryReportIndex]?.totalIncome || 0;
-            totalTransactions = laundryReports[laundryReportIndex]?.totalTransactions || 0;
-        }
+    if (isAllBranch) {
+        totalIncome = laundryReports.reduce((sum, report) => sum + report.totalIncome, 0);
+        totalTransactions = laundryReports.reduce(
+            (sum, report) => sum + report.totalTransactions,
+            0
+        );
+    } else {
+        const report = laundryReports.find(
+            (report) => report._id.toString() === branchId.toString()
+        );
+        totalIncome = report ? report.totalIncome : 0;
+        totalTransactions = report ? report.totalTransactions : 0;
     }
+
+
 
     const newReport = new Report({
         branchId: isAllBranch ? null : branchId,
