@@ -20,8 +20,13 @@ let receiptNumberCounter = 0;
 
 const getLaundryList = async (req, res, next) => {
     try {
-        const laundryList = await Laundry.aggregate(GET_LAUNDRY_LIST)
-        responseHelper(res, "Success get all laundry", 200, true, laundryList)
+        const { page = 1 } = req.query;
+        const limit = 15;
+        const skip = (page - 1) * limit;
+        const laundryList = await Laundry.aggregate(GET_LAUNDRY_LIST(limit, skip));
+        const totalFetched = laundryList.length;
+        const totalLaundryList = await Laundry.find().countDocuments();
+        responseHelper(res, "Success get all laundry", 200, true, { laundryList, totalFetched, hasNextPage: totalLaundryList > (skip + limit) })
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
@@ -30,8 +35,13 @@ const getLaundryList = async (req, res, next) => {
 
 const getLaundryListUnarchived = async (req, res, next) => {
     try {
-        const laundryList = await Laundry.aggregate(GET_LAUNDRY_LIST_UNARCHIVED);
-        responseHelper(res, "Success get unarchived laundry list", 200, true, laundryList);
+        const { page = 1 } = req.query;
+        const limit = 15;
+        const skip = (page - 1) * limit;
+        const laundryList = await Laundry.aggregate(GET_LAUNDRY_LIST_UNARCHIVED(limit, skip));
+        const totalFetched = laundryList.length;
+        const totalLaundryList = await Laundry.find({ isArchive: false }).countDocuments();
+        responseHelper(res, "Success get unarchived laundry list", 200, true, { laundryList, totalFetched, hasNextPage: totalLaundryList > (skip + limit) });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
@@ -40,8 +50,13 @@ const getLaundryListUnarchived = async (req, res, next) => {
 
 const getLaundryListArchived = async (req, res, next) => {
     try {
-        const laundryList = await Laundry.aggregate(() => GET_LAUNDRY_LIST_ARCHIVED);
-        responseHelper(res, "Success get unarchived laundry list", 200, true, laundryList);
+        const { page = 1 } = req.query;
+        const limit = 15;
+        const skip = (page - 1) * limit;
+        const laundryList = await Laundry.aggregate(GET_LAUNDRY_LIST_ARCHIVED(limit, skip));
+        const totalFetched = laundryList.length;
+        const totalLaundryList = await Laundry.find({ isArchive: true }).countDocuments();
+        responseHelper(res, "Success get unarchived laundry list", 200, true, { laundryList, totalFetched, hasNextPage: totalLaundryList > (skip + limit) });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err)
@@ -50,6 +65,9 @@ const getLaundryListArchived = async (req, res, next) => {
 
 const getUnarchivedLaundryListByBranch = async (req, res, next) => {
     try {
+        const { page = 1 } = req.query;
+        const limit = 15;
+        const skip = (page - 1) * limit;
         const errors = validationResult(req);
         if (!errors.isEmpty()) errorHelper("Validation failed", 422, errors.array());
 
@@ -57,8 +75,10 @@ const getUnarchivedLaundryListByBranch = async (req, res, next) => {
         const existingBranch = await BranchList.findById(branchId);
         if (!existingBranch) errorHelper("Branch not found", 422);
 
-        const laundryList = await Laundry.aggregate(GET_LAUNDRY_LIST_UNARCHIVED_BY_BRANCH(branchId));
-        responseHelper(res, "Success get unarchived laundry list by branchId", 200, true, laundryList);
+        const laundryList = await Laundry.aggregate(GET_LAUNDRY_LIST_UNARCHIVED_BY_BRANCH(branchId, limit, skip));
+        const totalFetched = laundryList.length;
+        const totalLaundryList = await Laundry.find({ branchId, isArchive: false }).countDocuments();
+        responseHelper(res, "Success get unarchived laundry list by branchId", 200, true, { laundryList, totalFetched, hasNextPage: totalLaundryList > (skip + limit) });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);
