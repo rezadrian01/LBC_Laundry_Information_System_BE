@@ -32,13 +32,18 @@ const getTotalLaundryPerStatus = async (req, res, next) => {
 
 const getLaundryListByStatus = async (req, res, next) => {
     try {
+        const { page = 1 } = req.query;
         const { statusId } = req.params;
         const existingStatus = await StatusList.findById(statusId);
         if (!existingStatus) errorHelper("Status not found", 404);
 
-        const laundryList = await LaundryStatus.aggregate(GET_LAUNDRY_BY_STATUS(new mongoose.Types.ObjectId(statusId)));
-
-        responseHelper(res, "Success get laundry by status", 200, true, laundryList);
+        const limit = 15;
+        const skip = (page - 1) * limit;
+        let laundryList = await LaundryStatus.aggregate(GET_LAUNDRY_BY_STATUS(new mongoose.Types.ObjectId(statusId), limit, skip));
+        laundryList = laundryList.map(laundry => ({ ...laundry.laundry }));
+        const totalFetched = laundryList.length;
+        const totalLaundryList = await LaundryStatus.find({ _id: new mongoose.Types.ObjectId(statusId) });
+        responseHelper(res, "Success get laundry by status", 200, true, { laundryList, totalFetched, hasNextPage: totalLaundryList > (skip + limit) });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err)

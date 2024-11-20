@@ -1181,7 +1181,7 @@ const GET_LAUNDRY_BY_STATUS = (statusId, limit = 15, skip) => {
     return [
         {
             $match: {
-                statusId: statusId
+                statusId: statusId,
             }
         },
         {
@@ -1323,6 +1323,34 @@ const GET_LAUNDRY_BY_STATUS = (statusId, limit = 15, skip) => {
             }
         },
         {
+            $addFields: {
+                laundry: {
+                    _id: "$laundry._id",
+                    receiptNumber: "$laundry.receiptNumber",
+                    branchId: "$laundry.branchId",
+                    customerName: "$laundry.customerName",
+                    customerAddress: "$laundry.customerAddress",
+                    customerContact: "$laundry.customerContact",
+                    isPaidOff: "$laundry.isPaidOff",
+                    isArchive: "$laundry.isArchive",
+                    weight: "$laundry.weight",
+                    totalItems: "$laundry.totalItems",
+                    totalPrice: "$laundry.totalPrice",
+                    createdAt: "$laundry.createdAt",
+                    updatedAt: "$laundry.updatedAt",
+                    branchId: {
+                        _id: "$branch._id",
+                        name: "$branch.name",
+                        address: "$branch.address"
+                    },
+                    status: {
+                        _id: "$status._id",
+                        name: "$status.name",
+                    }
+                }
+            }
+        },
+        {
             $project: {
                 tempItemServices: 0
             }
@@ -1380,7 +1408,10 @@ const GET_LAUNDRY_BY_STATUS = (statusId, limit = 15, skip) => {
                 itemLists: 0,
                 items: 0,
                 tempItemType: 0,
-                mergeItemService: 0
+                mergeItemService: 0,
+                status: 0,
+                branch: 0
+                // laundry: 1
             }
         },
         { $skip: skip },

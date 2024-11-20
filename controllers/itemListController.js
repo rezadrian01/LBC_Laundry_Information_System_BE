@@ -24,7 +24,6 @@ const getItemListGroupByServices = async (req, res, next) => {
         const itemList = await ItemList.aggregate(GET_ITEM_LIST_GROUP_BY_SERVICES(limit, skip));
         const totalFetched = itemList.length;
         const totalItemList = await ItemList.find().countDocuments();
-        console.log({ totalFetched, totalItemList });
         responseHelper(res, "Success get item list group by services", 200, true, { itemList, totalFetched, hasNextPage: totalItemList > (skip + limit) });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
