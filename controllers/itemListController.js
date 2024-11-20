@@ -18,8 +18,14 @@ const getItemList = async (req, res, next) => {
 
 const getItemListGroupByServices = async (req, res, next) => {
     try {
-        const itemList = await ItemList.aggregate(GET_ITEM_LIST_GROUP_BY_SERVICES());
-        responseHelper(res, "Success get item list group by services", 200, true, itemList);
+        const { page = 1 } = req.query;
+        const limit = 15;
+        const skip = (page - 1) * limit;
+        const itemList = await ItemList.aggregate(GET_ITEM_LIST_GROUP_BY_SERVICES(limit, skip));
+        const totalFetched = itemList.length;
+        const totalItemList = await ItemList.find().countDocuments();
+        console.log({ totalFetched, totalItemList });
+        responseHelper(res, "Success get item list group by services", 200, true, { itemList, totalFetched, hasNextPage: totalItemList > (skip + limit) });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err);

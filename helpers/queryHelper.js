@@ -1419,7 +1419,7 @@ const GET_TOTAL_WEIGHT_ON_BRANCH = () => {
     ]
 }
 
-const GET_ITEM_LIST_GROUP_BY_SERVICES = () => {
+const GET_ITEM_LIST_GROUP_BY_SERVICES = (limit, skip) => {
     return [
         {
             $lookup: {
@@ -1445,7 +1445,9 @@ const GET_ITEM_LIST_GROUP_BY_SERVICES = () => {
                     }
                 }
             }
-        }
+        },
+        { $skip: skip },
+        { $limit: limit }
 
     ];
 }
