@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 
 const { responseHelper } = require('./helpers/responseHelper');
-// const { startScheduler } = require('./utils/scheduler');npm 
+// const { startScheduler } = require('./utils/scheduler');
 
 
 config();
