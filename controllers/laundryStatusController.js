@@ -42,7 +42,7 @@ const getLaundryListByStatus = async (req, res, next) => {
         let laundryList = await LaundryStatus.aggregate(GET_LAUNDRY_BY_STATUS(new mongoose.Types.ObjectId(statusId), limit, skip));
         laundryList = laundryList.map(laundry => ({ ...laundry.laundry }));
         const totalFetched = laundryList.length;
-        const totalLaundryList = await LaundryStatus.find({ _id: new mongoose.Types.ObjectId(statusId) });
+        const totalLaundryList = await LaundryStatus.find({ statusId: new mongoose.Types.ObjectId(statusId) }).countDocuments();
         responseHelper(res, "Success get laundry by status", 200, true, { laundryList, totalFetched, hasNextPage: totalLaundryList > (skip + limit) });
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
