@@ -1423,10 +1423,11 @@ const GET_TOTAL_INCOME_AND_TOTAL_TRANSACTION_FROM_LAUNDRY = (startDate, endDate)
     return [
         {
             $match: {
-                createdAt: {
+                updatedAt: {
                     $gte: startDate,
                     $lte: endDate
-                }
+                },
+                isPaidOff: true
             }
         },
         {

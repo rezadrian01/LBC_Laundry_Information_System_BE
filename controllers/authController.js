@@ -51,7 +51,7 @@ const logout = async (req, res, next) => {
     try {
         const { token } = req.cookies;
         if (!token) errorHelper("No token provided", 401);
-        res.clearCookie("token").status(200).json({ success: true, message: "Logout success" })
+        res.clearCookie("token", { httpOnly: true, sameSite: "None", secure: true }).status(200).json({ success: true, message: "Logout success" })
     } catch (err) {
         if (!err.statusCode) err.statusCode = 500;
         next(err)

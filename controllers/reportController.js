@@ -35,6 +35,42 @@ const getReportListByPeriod = async (req, res, next) => {
     }
 }
 
+const getLatestReportListByBranch = async (req, res, next) => {
+    try {
+        const { branchId } = req.params;
+        if (branchId !== "all") {
+            const existingBranch = await BranchList.findById(branchId);
+            if (!existingBranch) errorHelper("Branch not found", 404);
+        }
+
+        const periodList = await reportSchema.path('reportPeriod').enumValues;
+        let reportList = {
+            harian: [],
+            mingguan: [],
+            bulanan: [],
+            tahunan: []
+        };
+        for (let period of periodList) {
+            let limit;
+            if (period.toLowerCase() === 'harian') limit = 14;
+            if (period.toLowerCase() === 'mingguan') limit = 12;
+            if (period.toLowerCase() === 'bulanan') limit = 12;
+            if (period.toLowerCase() === 'tahunan') limit = 5;
+            const currentReportList = await Report.find({
+                reportPeriod: period,
+                branchId: branchId === 'all' ? null : branchId
+            })
+                .sort({ endDate: -1 })
+                .limit(limit);
+            reportList[period.toLowerCase()] = [...currentReportList]
+        }
+        responseHelper(res, "Success get report list by branch", 200, true, reportList)
+    } catch (err) {
+        if (!err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 const getLatestReportListByPeriodAndBranch = async (req, res, next) => {
     try {
         const errors = validationResult(req);
@@ -133,6 +169,7 @@ const deleteReport = async (req, res, next) => {
 module.exports = {
     getReportList,
     getReportListByPeriod,
+    getLatestReportListByBranch,
     getLatestReportListByPeriodAndBranch,
     getReportPeriodList,
     getReportDetail,
